@@ -1,8 +1,14 @@
 function [A, B, C, D, Q] = gss2double(sys)
 %GSS2DOUBLE General Space State system
-    A = cat(3, sys.A);
-    B = cat(3, sys.B);
-    C = cat(3, sys.C);
-    D = cat(3, sys.D);
-    Q = cat(3, sys.Q);
+    A = catcell(sys.A);
+    B = catcell(sys.B);
+    C = catcell(sys.C);
+    D = catcell(sys.D);
+    Q = catcell(sys.Q);
+end
+
+function matrix = catcell(cell_array)
+    for i=length(cell_array):-1:1
+        matrix(:,:,i) = cell_array{i};
+    end
 end
