@@ -16,7 +16,7 @@ plot_compression_rate = 1e3;
 % Theorems defineds
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 1;
+opt_theorem = 2;
 
 %% Desired DC-DC converter to use
 
@@ -95,7 +95,7 @@ end
 % Number of simulations to run
 Ns = size(lambdas, 1);
 
-bar = waitbar(0, '');
+bar = waitbar(0, 'Preparing simulation');
 
 for i=Ns:-1:1
     
