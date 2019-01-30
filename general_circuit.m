@@ -95,7 +95,7 @@ end
 % Number of simulations to run
 Ns = size(lambdas, 1);
 
-bar = waitbar(0, 'Preparing simulation');
+bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
 for i=Ns:-1:1
     
