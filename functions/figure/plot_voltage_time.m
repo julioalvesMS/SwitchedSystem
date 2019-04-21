@@ -4,25 +4,24 @@ function plot_voltage_time(sim_out, name, folder)
 %   The image will be saved automatically if the folder is argument 
 %   is given
     
-    save_image = nargin == 3;
+    configuration = figure_configuration;
     
-    name = strcat(name, ' - Voltage x Time');
+    configuration.save = nargin == 3;
+    
+    if configuration.save
+        configuration.folder_path = folder;
+    end
+    
+    configuration.title = strcat(name, ' - Voltage x Time');
 
-    figure;
-    hold all;
-    
-    for i=1:length(sim_out)
-        plot(sim_out(i).x.Time*1e3, sim_out(i).x.Data(:,2));
+    for i=length(sim_out):-1:1
+        data(i).x = sim_out(i).Vout.Time*1e3;
+        data(i).y = sim_out(i).Vout.Data;
     end
     
-    ylabel('V [V]');
-    xlabel('t [ms]');
-    title(name);
-    hold off;
+    configuration.ylabel = 'v_o [V]';
+    configuration.xlabel = 't [ms]';
     
-    
-    if save_image
-        saveas(gcf, strcat(folder, name, '.png'));
-    end
+    plot_figure(data, configuration);
 end
 

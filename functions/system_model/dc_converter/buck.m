@@ -2,6 +2,8 @@ classdef buck
     
     properties (Constant = true) 
         name = 'Buck';
+        
+        simulink = 'ideal_buck.slx'
     end
     
     methods(Static)

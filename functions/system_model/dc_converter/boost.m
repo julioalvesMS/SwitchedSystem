@@ -2,6 +2,8 @@ classdef boost
     
     properties (Constant = true) 
         name = 'Boost';
+        
+        simulink = 'ideal_boost.slx'
     end
     
     methods(Static)

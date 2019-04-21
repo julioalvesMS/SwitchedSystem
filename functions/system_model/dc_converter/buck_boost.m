@@ -2,6 +2,8 @@ classdef buck_boost
     
     properties (Constant = true) 
         name = 'Buck-Boost';
+        
+        simulink = 'ideal_buck_boost.slx'
     end
     
     methods(Static)

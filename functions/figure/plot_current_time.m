@@ -1,4 +1,4 @@
-function plot_voltage_current(sim_out, name, folder)
+function plot_current_time(sim_out, name, folder)
 %PLOT_VOLTAGE_CURRENT Plot Voltage x Current
 %   Makes a Voltage X Current plot from the simulation output.
 %   The image will be saved automatically if the folder is argument 
@@ -12,15 +12,15 @@ function plot_voltage_current(sim_out, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Voltage x Current');
+    configuration.title = strcat(name, ' - Current x Time');
 
     for i=length(sim_out):-1:1
-        data(i).x = sim_out(i).Iout.Data;
-        data(i).y = sim_out(i).Vout.Data;
+        data(i).x = sim_out(i).Iout.Time*1e3;
+        data(i).y = sim_out(i).Iout.Data;
     end
     
-    configuration.ylabel = 'v_o [V]';
-    configuration.xlabel = 'I [A]';
+    configuration.ylabel = 'I [A]';
+    configuration.xlabel = 't [ms]';
     
     plot_figure(data, configuration);
 end
