@@ -25,26 +25,26 @@ Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 % Types of simulations:
 %   1 - General Space State System Models
 %   2 - Specific Circuit Model
-opt_model = 2;
+opt_model = 1;
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 1;
+opt_theorem = 2;
 
 % Use PWM Controled mode or default switched control
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 0;
+opt_pwm = 1;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
 %   buck
 %   boost
 %   buck_boost
-circuit = buck;
+circuit = boost;
 
 %% System Specifications
 
@@ -73,7 +73,6 @@ x0 = [0; 0];
 %   C - Cell Array with each subsystem C matrix - sys.C{i}
 %   D - Cell Array with each subsystem D matrix - sys.D{i}
 %   Q - Cell Array with each subsystem Q matrix - sys.Q{i}
-%   Q - Cell Array with each subsystem Q matrix - sys.Q{i}
 %   N - Number of avaliable subsystems - sys.N
 sys = circuit.get_sys(R, Ro, Co, L);
 
@@ -89,11 +88,11 @@ switch(opt_theorem)
         lambdas = generate_lambda_2d(0.05);
     case 2
         % Boost
-        %test_voltages = 100:10:200;
+        test_voltages = 100:10:200;
         % Buck
-        test_voltages = 10:10:90;
+        %test_voltages = 10:10:90;
         % Buck-Boost
-        test_voltages = 10:10:130;
+        %test_voltages = 10:10:130;
         
         [sample_lambdas, equilibrium] = generate_sample_points(sys);
         
@@ -150,9 +149,10 @@ for i=Ns:-1:1
     % model
     SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, xe, sys.N);
 
-    
+    % Update wait bar
     waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));
     
+    % Run simulation
     sim(model, [0 0.2]);
     
     % Store only samples of the data, this will be made in order to save
