@@ -4,7 +4,7 @@ clear; clc; close all;
 % folders to create
 image_folder = 'images';
 cache_folder = 'tmp/cache';
-
+ 
 [~,~]=mkdir(image_folder);
 image_folder = strcat(image_folder, '/');
 [~,~]=mkdir(cache_folder);
@@ -25,7 +25,7 @@ Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 % Types of simulations:
 %   1 - General Space State System Models
 %   2 - Specific Circuit Model
-opt_model = 1;
+opt_model = 2;
 
 % Desired Theorem to use
 % Theorems defines
@@ -37,7 +37,18 @@ opt_theorem = 2;
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 1;
+opt_pwm = 0;
+
+pwm_controller_Kp = 13.2;
+pwm_controller_Ki = 7.24e03;
+
+% Update the equilibrium point from the system
+% Options
+%   0 - Use given equilibrium
+%   1 - Update equilibrium based on given reference voltage
+opt_update_equilibrium = 0;
+XE_Kp = 0
+XE_Ki = 0
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -45,6 +56,13 @@ opt_pwm = 1;
 %   boost
 %   buck_boost
 circuit = boost;
+
+% Boost
+test_voltages = 100:10:200;
+% Buck
+%test_voltages = 10:10:90;
+% Buck-Boost
+% test_voltages = 10:20:170;
 
 %% System Specifications
 
@@ -82,37 +100,24 @@ sys.x0 = x0;
 
 %% Lambdas to simulate
 
-switch(opt_theorem)
-    case 1
-        % Generates a generic lambda matrix to be used
-        lambdas = generate_lambda_2d(0.05);
-    case 2
-        % Boost
-        test_voltages = 100:10:200;
-        % Buck
-        %test_voltages = 10:10:90;
-        % Buck-Boost
-        %test_voltages = 10:10:130;
-        
-        [sample_lambdas, equilibrium] = generate_sample_points(sys);
-        
-        % To be able to interpolate the data, we will use the only the
-        % first lambda and the output voltage
-        lamb1 = sample_lambdas(:,1);
-        Vlamb = equilibrium(:,2);
-        
-        ns = length(test_voltages);
-        lambdas = zeros(ns, 2);
-        for i=1:ns
-            % Only use the lambdas before the inflection point from the
-            % voltage
-            [~, inflection] = max(Vlamb);
-            
-            % interpolate the data to discover the needed lambda to reach
-            % the desired voltage
-            lamb = interp1(Vlamb(1:inflection), lamb1(1:inflection), test_voltages(i));
-            lambdas(i,:) = [lamb, 1-lamb];
-        end
+[sample_lambdas, equilibrium] = generate_sample_points(sys);
+
+% To be able to interpolate the data, we will use the only the
+% first lambda and the output voltage
+lamb1 = sample_lambdas(:,1);
+Vlamb = equilibrium(:,2);
+
+ns = length(test_voltages);
+lambdas = zeros(ns, 2);
+for i=1:ns
+    % Only use the lambdas before the inflection point from the
+    % voltage
+    [~, inflection] = max(Vlamb);
+
+    % interpolate the data to discover the needed lambda to reach
+    % the desired voltage
+    lamb = interp1(Vlamb(1:inflection), lamb1(1:inflection), test_voltages(i));
+    lambdas(i,:) = [lamb, 1-lamb];
 end
 
 %% Simulate Converter 
@@ -147,7 +152,7 @@ for i=Ns:-1:1
     
     % Creates a bus, wich will be used in the simulink to simplify the
     % model
-    SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, xe, sys.N);
+    SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, sys.N);
 
     % Update wait bar
     waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));

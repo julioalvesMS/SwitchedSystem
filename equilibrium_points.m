@@ -13,10 +13,6 @@ cache_folder = strcat(cache_folder, '/');
 addpath(genpath('functions'))
 addpath(genpath('models'))
 
-
-plot_compression_rate = 1e3;
-
-
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
 %% Simulation Parametersr
@@ -26,7 +22,7 @@ Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 %   buck
 %   boost
 %   buck_boost
-circuit = buck_boost;
+circuit = buck;
 
 sys = default_converter_sys(circuit);
 
@@ -37,3 +33,4 @@ sys = default_converter_sys(circuit);
 %% Analysis
 
 plot_voltage_current_equilibrium(equilibrium, circuit.name, image_folder);
+plot_voltage_lambda_equilibrium(equilibrium, sample_lambdas, circuit.name, image_folder);

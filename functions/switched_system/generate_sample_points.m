@@ -3,7 +3,7 @@ function [test_lambdas,equilibrium] = generate_sample_points(sys)
 %   Detailed explanation goes here
 
     % Sample points
-    test_lambdas = generate_lambda_2d(0.01);
+    test_lambdas = generate_lambda_2d(0.001);
 
     % Calculate the equilibrium point for each lambda sample
     for i=size(test_lambdas, 1):-1:1
