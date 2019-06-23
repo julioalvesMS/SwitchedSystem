@@ -44,8 +44,8 @@ sys_ss = ss(A, B, C, D);
 s = tf('s');
 sys_tf = tf(sys_ss);
 
-Kp = 13.2;
-Ki = 7.24e03;
+Kp = 0.01;
+Ki = 0.05 * Kp;
 C_pid = Kp+Ki/s;
 
 sisotool(sys_tf, C_pid);

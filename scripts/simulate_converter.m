@@ -1,73 +1,3 @@
-%% Initial Setup
-clear; clc; close all;
-
-% folders to create
-image_folder = 'images';
-cache_folder = 'tmp/cache';
-
-[~,~]=mkdir(image_folder);
-image_folder = strcat(image_folder, '/');
-[~,~]=mkdir(cache_folder);
-cache_folder = strcat(cache_folder, '/');
-
-addpath(genpath('functions'))
-addpath(genpath('models'))
-addpath(genpath('scripts'))
-
-
-plot_compression_rate = 1e3;
-
-
-Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
-
-%% System Specifications
-
-run system_specifications
-
-%% Simulation Parametersr
-
-% Model type to simulate
-% Types of simulations:
-%   1 - General Space State System Models
-%   2 - Specific Circuit Model
-opt_model = 2;
-
-% Desired Theorem to use
-% Theorems defines
-%   1 - Fixed Equilibrium
-%   2 - Valiable Equilibrium
-opt_theorem = 2;
-
-% Use PWM Controled mode or default switched control
-% Options
-%   0 - Use default control system
-%   1 - Use pwm control system
-opt_pwm = 0;
-
-
-% Update the equilibrium point from the system
-% Options
-%   0 - Use given equilibrium
-%   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 0;
-
-disturbance_Vin_enable = 0;
-disturbance_Ro_enable = 0;
-
-% Desired DC-DC converter to use
-% Options can be found in the system directory:
-%   buck
-%   boost
-%   buck_boost
-circuit = boost(R, Ro, Co, L);
-
-
-test_voltages = circuit.test_voltages;
-
-test_voltages = [170];
-
-simulation_duration = 0.15;
-
 
 %% Prepare Data
 
@@ -107,6 +37,8 @@ sim_param.SimulationMode = 'rapid';
 sim_param.AbsTol         = '1e-5';
 
 load_system(model);
+
+sim_out = [];
 
 for i=Ns:-1:1
     

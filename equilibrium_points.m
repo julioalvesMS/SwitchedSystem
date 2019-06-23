@@ -15,6 +15,10 @@ addpath(genpath('models'))
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
+%% System Specifications
+
+run system_specifications
+
 %% Simulation Parametersr
 
 % Desired DC-DC converter to use
@@ -22,9 +26,11 @@ Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 %   buck
 %   boost
 %   buck_boost
-circuit = buck;
+circuit = boost(R, Ro, Co, L);
 
-sys = default_converter_sys(circuit);
+%% Prepare Data
+
+run load_circuit_sys
 
 %% System Equilibrium Points
 
