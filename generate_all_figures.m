@@ -58,6 +58,7 @@ image_folder = strcat(image_folder, '/');
 pwm_config = default_config;
 pwm_config.opt_pwm = 1;
 pwm_config.image_folder = image_folder;
+pwm_config.simulation_duration = 0.1;
 
 % Buck
 new_sim = pwm_config;
@@ -86,6 +87,7 @@ image_folder = strcat(image_folder, '/');
 theo1_config = default_config;
 theo1_config.opt_theorem = 1;
 theo1_config.image_folder = image_folder;
+theo1_config.simulation_duration = 0.05;
 
 % Buck
 new_sim = theo1_config;
@@ -120,6 +122,7 @@ theo2_config.image_folder = image_folder;
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
+new_sim.simulation_duration = 0.05;
 config_simulations{end+1} = new_sim;
 
 % Boost
@@ -150,6 +153,7 @@ theo2pi_config.image_folder = image_folder;
 new_sim = theo2pi_config;
 new_sim.circuit = circuit_buck;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
+new_sim.simulation_duration = 0.1;
 config_simulations{end+1} = new_sim;
 
 % Boost

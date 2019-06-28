@@ -64,7 +64,7 @@ circuit = boost(R, Ro, Co, L);
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [170];
+% test_voltages = [170];
 
 simulation_duration = 0.15;
 

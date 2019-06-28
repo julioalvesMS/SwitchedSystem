@@ -12,7 +12,7 @@ function plot_disturbance_voltage_time(sim_out, disturbance_time, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Distúrbio');
+    configuration.title = name;
     
     dt = 100e-3; % [s]
 
