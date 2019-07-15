@@ -11,7 +11,8 @@ image_folder = strcat(image_folder, '/');
 cache_folder = strcat(cache_folder, '/');
 
 addpath(genpath('functions'))
-addpath(genpath('models'))
+addpath(genpath('simulations'))
+addpath(genpath('system_models'))
 addpath(genpath('scripts'))
 
 
@@ -49,24 +50,26 @@ opt_pwm = 0;
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 0;
+opt_update_equilibrium = 1;
 
 disturbance_Vin_enable = 0;
-disturbance_Ro_enable = 0;
+disturbance_Ro_enable = 1;
+
+opt_constant_reference = 1;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
 %   buck
 %   boost
 %   buck_boost
-circuit = boost(R, Ro, Co, L);
+circuit = buck(R, Ro, Co, L, Rc);
 
 
 test_voltages = circuit.test_voltages;
 
-% test_voltages = [170];
+test_voltages = [100];
 
-simulation_duration = 0.15;
+simulation_duration = 1.40;
 
 
 %% Prepare Data
@@ -137,6 +140,7 @@ for i=Ns:-1:1
     % memory use
     sim_out(i).Iout = compress_data(logsout.get('Iout').Values, plot_compression_rate);
     sim_out(i).Vout = compress_data(logsout.get('Vout').Values, plot_compression_rate);
+    sim_out(i).xe = compress_data(logsout.get('xe').Values, plot_compression_rate);
 end
 close(bar);
 
