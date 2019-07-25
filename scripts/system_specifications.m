@@ -6,14 +6,14 @@ pwm_frequency = 1e5; % [Hz] PWM frequency
 pwm_sample_frequency = 1e6;
 
 % Circuit specifications
-R  = 0.135; % [Ohm] - Converter Resistance
-L  = 5e-3; % [H] - Converter Indutance
-Ro = 96.8; % [Ohm] - Load Resistance
-Co = 2250e-6; % [F] - Output Capacitance
-Rc = 0.015; % [Ohm] - Capcitor Resistance
+R  = 1e-3; % [Ohm] - Converter Resistance
+L  = 4.8e-6; % [H] - Converter Indutance
+Ro = 7; % [Ohm] - Load Resistance
+Co = 726e-6; % [F] - Output Capacitance
+Rc = 0.00015; % [Ohm] - Capcitor Resistance
 
 % Input voltage
-Vs = 400; % [V]
+Vs = 9; % [V]
 
 % System starts discharged
 x0 = [0; 0];

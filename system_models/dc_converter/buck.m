@@ -13,8 +13,8 @@ classdef buck
         pwm_pid_ki = 14.24;
         pwm_pid_kd = 0.0119;
         
-        reference_pid_kp = 0.5;
-        reference_pid_ki = 14;
+        reference_pid_kp = 5;
+        reference_pid_ki = 140;
     end
     
     properties

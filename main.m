@@ -53,7 +53,7 @@ opt_pwm = 0;
 opt_update_equilibrium = 1;
 
 disturbance_Vin_enable = 0;
-disturbance_Ro_enable = 1;
+disturbance_Ro_enable = 0;
 
 opt_constant_reference = 1;
 
@@ -62,12 +62,12 @@ opt_constant_reference = 1;
 %   buck
 %   boost
 %   buck_boost
-circuit = buck(R, Ro, Co, L, Rc);
+circuit = buck(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [100];
+test_voltages = [5];
 
 simulation_duration = 1.40;
 
