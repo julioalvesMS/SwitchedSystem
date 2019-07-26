@@ -19,7 +19,7 @@ Vs = 9; % [V]
 x0 = [0; 0];
 
 % Main control specifications
-Fsw = 1e5; % [Hz] PWM frequency
+Fsw = 20e3; % [Hz] - Modern controller maximum switching frequency
 
 % Parameters for dynamic reference
 Vo = 270;

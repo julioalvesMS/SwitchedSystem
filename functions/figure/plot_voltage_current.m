@@ -12,7 +12,7 @@ function plot_voltage_current(sim_out, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Tens√£o x Corrente');
+    configuration.title = strcat(name, ' - Tens„o x Corrente');
 
     for i=length(sim_out):-1:1
         data(i).x = sim_out(i).Iout.Data;

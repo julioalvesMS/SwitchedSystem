@@ -43,14 +43,14 @@ opt_theorem = 2;
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 0;
+opt_pwm = 1;
 
 
 % Update the equilibrium point from the system
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 1;
+opt_update_equilibrium = 0;
 
 disturbance_Vin_enable = 0;
 disturbance_Ro_enable = 0;

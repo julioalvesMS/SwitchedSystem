@@ -12,7 +12,7 @@ function plot_voltage_time(sim_out, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Tens√£o x Tempo');
+    configuration.title = strcat(name, ' - Tens„o x Tempo');
 
     for i=length(sim_out):-1:1
         data(2*i).x = sim_out(i).Vout.Time*1e3;
