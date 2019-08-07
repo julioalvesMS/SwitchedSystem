@@ -11,9 +11,19 @@ image_folder = strcat(image_folder, '/');
 cache_folder = strcat(cache_folder, '/');
 
 addpath(genpath('functions'))
-addpath(genpath('models'))
+addpath(genpath('simulations'))
+addpath(genpath('system_models'))
+addpath(genpath('scripts'))
+
+
+plot_compression_rate = 1e3;
+
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
+
+%% System Specifications
+
+run system_specifications
 
 %% Simulation Parametersr
 
@@ -22,7 +32,7 @@ Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 %   buck
 %   boost
 %   buck_boost
-circuit = boost;
+circuit = buck(R, Ro, Co, L);
 
 % Lambda used to create the mean system with wich the controle will be
 % designed
@@ -30,7 +40,9 @@ circuit = boost;
 %   sum(lambda) = 1
 lambda = [0.5 0.5];
 
-sys = default_converter_sys(circuit);
+%% Prepare Data
+
+run load_circuit_sys
 
 %% System Equilibrium Points
 
@@ -44,8 +56,10 @@ sys_ss = ss(A, B, C, D);
 s = tf('s');
 sys_tf = tf(sys_ss);
 
-Kp = 0.01;
-Ki = 0.05 * Kp;
-C_pid = Kp+Ki/s;
+Kp = 5e-2;
+Ki = 1.4e-0;
+Kd = 0;
+N = 100;
+C_pid = Kp+Ki/s + Kd * N/(1+N/s);
 
 sisotool(sys_tf, C_pid);

@@ -12,7 +12,7 @@ function plot_voltage_current_equilibrium(equilibrium_points, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Pontos de equilÃ­brio');
+    configuration.title = strcat(name, ' - Pontos de equilíbrio');
 
     data.x = equilibrium_points(:,1);
     data.y = equilibrium_points(:,2);

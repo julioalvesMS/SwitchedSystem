@@ -26,7 +26,7 @@ run system_specifications
 %   buck
 %   boost
 %   buck_boost
-circuit = boost(R, Ro, Co, L);
+circuit = buck(R, Ro, Co, L);
 
 %% Prepare Data
 

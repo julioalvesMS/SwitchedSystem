@@ -37,13 +37,13 @@ opt_model = 2;
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 2;
+opt_theorem = 1;
 
 % Use PWM Controled mode or default switched control
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 1;
+opt_pwm = 0;
 
 
 % Update the equilibrium point from the system
@@ -67,9 +67,9 @@ circuit = buck(R, Ro, Co, L);
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [5];
+test_voltages = [4];
 
-simulation_duration = 1.40;
+simulation_duration = 2;
 
 
 %% Prepare Data
