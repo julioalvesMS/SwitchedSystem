@@ -11,7 +11,9 @@ image_folder = strcat(image_folder, '/');
 cache_folder = strcat(cache_folder, '/');
 
 addpath(genpath('functions'))
-addpath(genpath('models'))
+addpath(genpath('simulations'))
+addpath(genpath('system_models'))
+addpath(genpath('scripts'))
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
@@ -26,7 +28,7 @@ run system_specifications
 %   buck
 %   boost
 %   buck_boost
-circuit = buck(R, Ro, Co, L);
+circuit = boost(R, Ro, Co, L);
 
 %% Prepare Data
 

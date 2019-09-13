@@ -16,8 +16,8 @@ classdef buck
 %         pwm_pid_kp = 5e-2;
 %         pwm_pid_ki = 100e-2;
         
-        reference_pid_kp = 5e-2;
-        reference_pid_ki = 100e-2;
+        reference_pid_kp = 5e-1;
+        reference_pid_ki = 100e-1;
     end
     
     properties
@@ -55,7 +55,7 @@ classdef buck
             D{2} = D{1};
 
             Q{1} = [
-                0   0
+                1e-6   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};
