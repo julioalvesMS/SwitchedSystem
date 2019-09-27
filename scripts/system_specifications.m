@@ -20,13 +20,15 @@ Co = 2250e-6; % [F] - Output Capacitance
 Rc = 0.00015; % [Ohm] - Capcitor Resistance
 
 % Input voltage
-Vs = 60; % [V]
+Vs = 65; % [V]
 
 % System starts discharged
 x0 = [0; 0];
 
 % Main control specifications
-Fsw = 20e3; % [Hz] - Modern controller maximum switching frequency
+Tsw = 5e-6; % [s] - Modern controller maximum switching period
+% Tsw = -1; % [s] - Modern controller maximum switching period
+Fsw = 1/Tsw; % [Hz] - Modern controller maximum switching frequency
 
 % Parameters for dynamic reference
 Vo = 270;

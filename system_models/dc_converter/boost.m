@@ -5,7 +5,7 @@ classdef boost
         
         simulink = 'ideal_boost.slx'
         
-        test_voltages = 100:10:200;
+        test_voltages = 65:10:300;
         
         single_voltage = 150;
         

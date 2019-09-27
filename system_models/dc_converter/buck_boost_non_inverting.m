@@ -1,13 +1,13 @@
-classdef buck
+classdef buck_boost_non_inverting
     
     properties (Constant = true) 
-        name = 'Buck';
+        name = 'Buck-Boost Bidirecional';
         
-        simulink = 'ideal_buck.slx'
+        simulink = 'ideal_buck_boost_non_inverter.slx'
         
-        test_voltages = 0:5:55;
+        test_voltages = 10:20:170;
         
-        single_voltage = 60;
+        single_voltage = 120;
         
         pwm_pid_kp = 0.5;
         pwm_pid_ki = 0.1;
@@ -28,7 +28,7 @@ classdef buck
     end
     
     methods
-        function converter = buck(R, Ro, Co, L)
+        function converter = buck_boost_non_inverting(R, Ro, Co, L)
             converter.R = R;
             converter.L = L;
             converter.Ro = Ro;
@@ -36,7 +36,7 @@ classdef buck
         end
         
         function sys = get_sys(self)
-        %SYS_BUCK Space State from Buck DC-DC converter
+        %SYS_BUCK_BOOST_NON_INVERTING Space State from Buck-Boost DC-DC converter
             
             A{1} = [
                 -self.R/self.L  -1/self.L
@@ -44,39 +44,53 @@ classdef buck
             ];
 
             A{2} = A{1};
+            
+            A{3} = [
+                -self.R/self.L  0
+                0     -1/(self.Ro*self.Co)
+            ];
 
             B{1} = [1/self.L; 0];
             B{2} = [0; 0];
+            B{3} = B{1};
 
             C{1} = [0 1/sqrt(self.Ro)];
             C{2} = C{1};
+            C{3} = C{1};
 
             D{1} = 0;
             D{2} = D{1};
+            D{3} = D{1};
 
             Q{1} = [
-                1e-2   0
+                0   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};
+            Q{3} = Q{1};
 
             sys = gss(A, B, C, D, Q);
         end
         
         function [lower, upper] = get_pwm_control_limits(self)
             
+            Rratio = self.R/self.Ro;
+            
             lower = 0;
-            upper = 1;
+            upper = Rratio + 1 - sqrt(Rratio*(1 + Rratio));
         end
         
         function fnc = get_converter_Ie_fnc(self)
-            fnc = @(Ve, Vin) (Ve/self.Ro);
+            fnc = @(Ve, Vin) (Vin/(2*self.R) - sqrt( Vin^2/(4*self.R^2) - Ve*(Ve+Vin)/(self.R*self.Ro) ) );
         end
         
         function [lower, upper] = get_reference_ve_limits(self, Vin)
             
-            upper = Vin;
+            error = 1;
+            
+            upper = Vin/2 * sqrt(self.Ro/self.R) - error;
             lower = 0;
         end
     end
 end
+

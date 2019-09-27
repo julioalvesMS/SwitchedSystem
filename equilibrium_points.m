@@ -28,6 +28,7 @@ run system_specifications
 %   buck
 %   boost
 %   buck_boost
+%   buck_boost_non_inverting
 circuit = boost(R, Ro, Co, L);
 
 %% Prepare Data

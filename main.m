@@ -62,14 +62,15 @@ opt_constant_reference = 1;
 %   buck
 %   boost
 %   buck_boost
-circuit = buck(R, Ro, Co, L);
+%   buck_boost_non_inverting
+circuit = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [50];
+test_voltages = [300];
 
-simulation_duration = 3;
+simulation_duration = 1;
 
 
 %% Prepare Data
@@ -89,7 +90,24 @@ run circuit_disturbance
 
 %% Lambdas to simulate
 
-lambdas = generate_lambda_voltage(sys, test_voltages);
+% lambdas = generate_lambda_voltage(sys, test_voltages);
+
+step = 0.25;
+sequence = 0:step:1;
+test_lambdas = zeros(15, 3);
+index = 1;
+for lambda1=sequence
+    for lambda2=0:step:(1-lambda1)
+        lambda3 = 1 - lambda2 - lambda1;
+        test_lambdas(index,1) = lambda1;
+        test_lambdas(index,2) = lambda2;
+        test_lambdas(index,3) = lambda3;
+        index = index+1;
+    end
+end
+lambdas = test_lambdas;
+
+lambdas = [0.1 0.2 0.7]
 
 %% Simulate Converter 
 
@@ -105,9 +123,6 @@ end
 Ns = size(lambdas, 1);
 
 bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
-
-sim_param.SimulationMode = 'rapid';
-sim_param.AbsTol         = '1e-5';
 
 load_system(model);
 
