@@ -19,6 +19,8 @@ Ro = 96.8; % [Ohm] - Load Resistance
 Co = 2250e-6; % [F] - Output Capacitance
 Rc = 0.00015; % [Ohm] - Capcitor Resistance
 
+tau = Ro*Co;
+
 % Input voltage
 Vs = 65; % [V]
 
@@ -26,7 +28,7 @@ Vs = 65; % [V]
 x0 = [0; 0];
 
 % Main control specifications
-Tsw = 5e-6; % [s] - Modern controller maximum switching period
+Tsw = 3.3e-5; % [s] - Modern controller maximum switching period
 % Tsw = -1; % [s] - Modern controller maximum switching period
 Fsw = 1/Tsw; % [Hz] - Modern controller maximum switching frequency
 

@@ -50,7 +50,7 @@ opt_pwm = 0;
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 0;
+opt_update_equilibrium = 1;
 
 disturbance_Vin_enable = 0;
 disturbance_Ro_enable = 0;
@@ -107,7 +107,10 @@ for lambda1=sequence
 end
 lambdas = test_lambdas;
 
-lambdas = [0.1 0.2 0.7]
+lambdas = [0.1 0.2 0.7];
+
+
+% lambdas = generate_lambda_voltage(sys, test_voltages);
 
 %% Simulate Converter 
 
@@ -141,6 +144,8 @@ for i=Ns:-1:1
             [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:));
     end
     
+    xe = [0 40]';
+    
     % Creates a bus, wich will be used in the simulink to simplify the
     % model
     SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, sys.N);
@@ -153,7 +158,7 @@ for i=Ns:-1:1
     
     % Store only samples of the data, this will be made in order to save
     % memory use
-    sim_out(i).Iout = compress_data(logsout.get('Iout').Values, plot_compression_rate);
+    sim_out(i).Iout = compress_data(logsout.get('IL').Values, plot_compression_rate);
     sim_out(i).Vout = compress_data(logsout.get('Vout').Values, plot_compression_rate);
     sim_out(i).xe = compress_data(logsout.get('xe').Values, plot_compression_rate);
 end
