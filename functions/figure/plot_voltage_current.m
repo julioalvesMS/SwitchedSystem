@@ -15,8 +15,8 @@ function plot_voltage_current(sim_out, name, folder)
     configuration.title = strcat(name, ' - Tensão x Corrente');
 
     for i=length(sim_out):-1:1
-        data(i).x = sim_out(i).Iout.Data;
-        data(i).y = sim_out(i).Vout.Data;
+        data(i).x1 = sim_out(i).IL.Data;
+        data(i).y1 = sim_out(i).Vout.Data;
     end
     
     configuration.ylabel = 'v_o [V]';

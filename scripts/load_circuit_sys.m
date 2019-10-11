@@ -14,6 +14,8 @@ sys = circuit.get_sys();
 sys.U = Vs;
 sys.x0 = x0;
 
+dsys = discrete_gss(sys,Ts);
+
 [pwm_limit_lower, pwm_limit_upper] = circuit.get_pwm_control_limits();
 
 fnc_converter_Ie = circuit.get_converter_Ie_fnc();

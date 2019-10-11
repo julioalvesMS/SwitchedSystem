@@ -38,7 +38,7 @@ sim_param.AbsTol         = '1e-5';
 
 load_system(model);
 
-sim_out = [];
+clear sim_out;
 
 for i=Ns:-1:1
     
@@ -67,8 +67,9 @@ for i=Ns:-1:1
     
     % Store only samples of the data, this will be made in order to save
     % memory use
-    sim_out(i).Iout = compress_data(logsout.get('Iout').Values, plot_compression_rate);
+    sim_out(i).IL = compress_data(logsout.get('IL').Values, plot_compression_rate);
     sim_out(i).Vout = compress_data(logsout.get('Vout').Values, plot_compression_rate);
+    sim_out(i).xe = compress_data(logsout.get('xe').Values, plot_compression_rate);
 end
 close(bar);
 

@@ -15,8 +15,8 @@ function plot_current_time(sim_out, name, folder)
     configuration.title = strcat(name, ' - Corrente x Tempo');
 
     for i=length(sim_out):-1:1
-        data(i).x = sim_out(i).Iout.Time*1e3;
-        data(i).y = sim_out(i).Iout.Data;
+        data(i).x1 = sim_out(i).IL.Time*1e3;
+        data(i).y1 = sim_out(i).IL.Data;
     end
     
     configuration.ylabel = 'I [A]';

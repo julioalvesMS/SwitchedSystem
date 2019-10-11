@@ -33,11 +33,17 @@ run system_specifications
 %   2 - Specific Circuit Model
 opt_model = 2;
 
+% Model type to simulate
+% Types of simulations:
+%   1 - General Space State System Models
+%   2 - Specific Circuit Model
+opt_discrete = 1;
+
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 2;
+opt_theorem = 1;
 
 % Use PWM Controled mode or default switched control
 % Options
@@ -63,12 +69,12 @@ opt_constant_reference = 1;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck_boost_non_inverting(R, Ro, Co, L);
+circuit = buck(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [300];
+test_voltages = [40];
 
 simulation_duration = 1;
 
@@ -90,36 +96,44 @@ run circuit_disturbance
 
 %% Lambdas to simulate
 
-% lambdas = generate_lambda_voltage(sys, test_voltages);
+if length(sys.A) == 2
+    lambdas = generate_lambda_voltage(sys, test_voltages);
+else
 
-step = 0.25;
-sequence = 0:step:1;
-test_lambdas = zeros(15, 3);
-index = 1;
-for lambda1=sequence
-    for lambda2=0:step:(1-lambda1)
-        lambda3 = 1 - lambda2 - lambda1;
-        test_lambdas(index,1) = lambda1;
-        test_lambdas(index,2) = lambda2;
-        test_lambdas(index,3) = lambda3;
-        index = index+1;
+    step = 0.25;
+    sequence = 0:step:1;
+    test_lambdas = zeros(15, 3);
+    index = 1;
+    for lambda1=sequence
+        for lambda2=0:step:(1-lambda1)
+            lambda3 = 1 - lambda2 - lambda1;
+            test_lambdas(index,1) = lambda1;
+            test_lambdas(index,2) = lambda2;
+            test_lambdas(index,3) = lambda3;
+            index = index+1;
+        end
     end
+    lambdas = test_lambdas;
+
+    lambdas = [0.1 0.2 0.7];
 end
-lambdas = test_lambdas;
-
-lambdas = [0.1 0.2 0.7];
-
-
-% lambdas = generate_lambda_voltage(sys, test_voltages);
 
 %% Simulate Converter 
 
 % Get model to simulate
 switch(opt_model)
     case 1
-        model = 'general_system.slx';
+        if opt_discrete == 0
+            model = 'general_system.slx';
+        else
+            model = 'discrete_general_system.slx';
+        end
     case 2
-        model = circuit.simulink;
+        if opt_discrete == 0
+            model = circuit.simulink;
+        else
+            model = circuit.discrete_simulink;
+        end
 end
 
 % Number of simulations to run
@@ -127,40 +141,54 @@ Ns = size(lambdas, 1);
 
 bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
-load_system(model);
+try
+    load_system(model);
 
-for i=Ns:-1:1
-    
-    % Convert the truct used to represent the space state to double, so it
-    % can be used in the simulink
-    [A, B, C, D, Q] = gss2double(sys);
-    
-    % Calculate the P matrix, as the equilibrium point. Calculation will be
-    % in accordance with the chosen control theorem
-    switch(opt_theorem)
-        case 1
-            [P, xe] = calc_sys_theorem_1(sys, lambdas(i,:));
-        case 2
-            [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:));
+    for i=Ns:-1:1
+
+        % Convert the truct used to represent the space state to double, so it
+        % can be used in the simulink
+        [A, B, C, D, Q] = gss2double(sys);          % Continuos
+        [Ad, Bd, Cd, Dd, Qd] = gss2double(dsys);    % Discrete
+
+        % Calculate the P matrix, as the equilibrium point. Calculation will be
+        % in accordance with the chosen control theorem
+        if opt_discrete == 0
+            switch(opt_theorem)
+                case 1
+                    [P, xe] = calc_sys_theorem_1(sys, lambdas(i,:));
+                case 2
+                    [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:));
+            end
+        else
+            [P, h, xe] = calc_sys_discrete_theorem_1(sys, dsys, lambdas(i,:));
+        end
+
+
+        % Creates a bus, wich will be used in the simulink to simplify the
+        % model
+        if opt_discrete == 0
+            SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, sys.N);
+        else
+            SystemDataBus = create_bus_DiscreteSystemDataBus(A, B, P, Q, sys.N, h);
+        end
+            
+
+        % Update wait bar
+        waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));
+
+        % Run simulation
+        sim(model, simulation_duration);
+
+        % Store only samples of the data, this will be made in order to save
+        % memory use
+        sim_out(i).IL = compress_data(logsout.get('IL').Values, plot_compression_rate);
+        sim_out(i).Vout = compress_data(logsout.get('Vout').Values, plot_compression_rate);
+        sim_out(i).xe = compress_data(logsout.get('xe').Values, plot_compression_rate);
     end
-    
-    xe = [0 40]';
-    
-    % Creates a bus, wich will be used in the simulink to simplify the
-    % model
-    SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, sys.N);
-
-    % Update wait bar
-    waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));
-    
-    % Run simulation
-    sim(model, simulation_duration);
-    
-    % Store only samples of the data, this will be made in order to save
-    % memory use
-    sim_out(i).Iout = compress_data(logsout.get('IL').Values, plot_compression_rate);
-    sim_out(i).Vout = compress_data(logsout.get('Vout').Values, plot_compression_rate);
-    sim_out(i).xe = compress_data(logsout.get('xe').Values, plot_compression_rate);
+catch exception
+    close(bar);
+    rethrow(exception);
 end
 close(bar);
 
@@ -175,3 +203,10 @@ plot_current_time(sim_out, circuit.name, image_folder);
 if disturbance_Ro_enable || disturbance_Vin_enable
     plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
 end
+
+figure;
+switches = logsout.get('State').Values.Data;
+Fa = abs(fft(switches));
+F = Fa(1:round(end/2));
+f = 0:1/simulation_duration:1/(2*Ti);
+plot(f,F);

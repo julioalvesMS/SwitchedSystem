@@ -25,8 +25,8 @@ function plot_disturbance_voltage_time(sim_out, disturbance_time, name, folder)
             to = length(sim_out(i).Vout.Time);
         end
         
-        data(i).x = sim_out(i).Vout.Time(1:to-from+1)*1e3;
-        data(i).y = sim_out(i).Vout.Data(from:to);
+        data(i).x1 = sim_out(i).Vout.Time(1:to-from+1)*1e3;
+        data(i).y1 = sim_out(i).Vout.Data(from:to);
     end
     
     configuration.ylabel = 'v_o [V]';

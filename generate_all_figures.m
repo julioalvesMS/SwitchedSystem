@@ -1,4 +1,4 @@
-x%% Initial Setup
+%% Initial Setup
 clear; clc; close all;
 
 % folders to create
@@ -11,7 +11,8 @@ root_image_folder = strcat(root_image_folder, '/');
 cache_folder = strcat(cache_folder, '/');
 
 addpath(genpath('functions'))
-addpath(genpath('models'))
+addpath(genpath('simulations'))
+addpath(genpath('system_models'))
 addpath(genpath('scripts'))
 
 
@@ -41,8 +42,10 @@ default_config.opt_model = 2;
 default_config.opt_theorem = 1;
 default_config.opt_pwm = 0;
 default_config.opt_update_equilibrium = 0;
+default_config.opt_constant_reference = 0;
 default_config.disturbance_Vin_enable = 0;
 default_config.disturbance_Ro_enable = 0;
+default_config.switching_period = -1;
 default_config.circuit = [];
 default_config.test_voltages = [];
 default_config.simulation_duration = 0.15;
@@ -432,8 +435,10 @@ for sim_id=1:sim_N
     opt_theorem = sim_config.opt_theorem;
     opt_pwm = sim_config.opt_pwm;
     opt_update_equilibrium = sim_config.opt_update_equilibrium;
+    opt_constant_reference = sim_config.opt_constant_reference;
     disturbance_Vin_enable = sim_config.disturbance_Vin_enable;
     disturbance_Ro_enable = sim_config.disturbance_Ro_enable;
+    Tsw = sim_config.switching_period;
     circuit = sim_config.circuit;
     test_voltages = sim_config.test_voltages;
     simulation_duration = sim_config.simulation_duration;

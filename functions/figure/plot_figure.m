@@ -7,7 +7,10 @@ function plot_figure(data, configuration)
     hold all;
     
     for i=1:length(data)
-        plot(data(i).x, data(i).y);
+        plot(data(i).x1, data(i).y1);
+        if isfield(data, 'y2')
+            plot(data(i).x2, data(i).y2, '--');
+        end
     end
     
     ylabel(configuration.ylabel);

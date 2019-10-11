@@ -57,8 +57,9 @@ function Po = solve_P_lmi(sys, xe)
     [copt,xopt] = mincx(lmisys,c,options);
 
     if (isempty(copt))
-        Po = [];
-        return
+        ME = MException('LmiException:noPossibleResult', ...
+        'A LMI não encontrou nenhuma resposta para P');
+        throw(ME)
     end
 
     Po = dec2mat(lmisys,xopt,P);
