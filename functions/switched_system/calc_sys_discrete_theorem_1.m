@@ -1,18 +1,26 @@
-function [P, h, xe] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
+function [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
 %CALC_SYS_CHAINED_1 Calculate de desired mean system using lambda
 %   Calculate de desigred mean system from the switched system
 %   Returns the system, P matrix and the equilibrium points
     
     E = 1e-3;
-    I = eye(length(sys.A));
+    I = eye(length(dsys.A));
+    
+    [Alc, Blc] = calc_sys_lambda(sys, lambda);
+    ye = -Alc\Blc*sys.U;
     
     [Al, Bl, Ql] = calc_sys_lambda(dsys, lambda);
-    xe = -(Al-I)\Bl*sys.U;
+    xe = -(Al-I)\Bl*dsys.U;
+    
+    for i=1:length(dsys.l)
+        dsys.L{i} = -(dsys.A{i}-I)*((Al-I)\Bl) + dsys.B{i};
+        dsys.l{i} = (dsys.A{i}-I)*xe + dsys.B{i}*dsys.U;
+    end
     
     P = I;
     
     for i=1:100
-        R = solve_R_lmi(dsys, Al, Ql, lambda, P);
+        R = solve_R_lmi(dsys, Al, Ql, lambda, P, xe, ye);
         
         if abs(trace(P\(R-P))) < E
             break;
@@ -25,13 +33,12 @@ function [P, h, xe] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
         P = alpha*R+(1-alpha)*P;
     end
     h = calc_sys_discrete_h(dsys, lambda, P);
+    d = h'/P*h;
 end
 
 
-function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps)
+function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps, xe, ye)
 
-    x0 = sys.x0;
-    
     nx = size(Alamb,1);
 
     % Descreve a LMI a ser projetada
@@ -54,8 +61,8 @@ function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps)
     ct = newlmi;
     lmiterm([-ct,1,1,0],1)
     for i=1:length(lambda)
-        lmiterm([-ct,1,1,P],-lambda(i)*beta*sys.B{i}',sys.B{i})
-        lmiterm([-ct,1,2,P],-lambda(i)*sys.B{i}',sys.A{i}/(eye(nx) - Alamb))
+        lmiterm([-ct,1,1,P],-lambda(i)*beta*sys.l{i}',sys.l{i})
+        lmiterm([-ct,1,2,P],-lambda(i)*sys.l{i}',sys.A{i}/(eye(nx) - Alamb))
     end
     lmiterm([-ct,2,2,P],1,1)
     lmiterm([-ct,2,3,P],1,1)
@@ -72,6 +79,13 @@ function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps)
     % W > 0
     ct = newlmi;
     lmiterm([-ct,1,1,W],1,1)
+    
+    % (ye ? xe)W(ye ? xe) < \sum ?i li P li,
+    ct = newlmi;
+    for i=1:length(lambda)
+        lmiterm([-ct,1,1,P],lambda(i)*sys.l{i}',sys.l{i})
+    end
+    lmiterm([ct,1,1,W],(ye-xe)',(ye-xe))
     
     lmisys = getlmis;
 

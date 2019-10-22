@@ -14,8 +14,8 @@ function plot_voltage_lambda_equilibrium(equilibrium_points, lambda, name, folde
     
     configuration.title = strcat(name, ' - Saída x Duty Cycle');
 
-    data.x = lambda(:,1);
-    data.y = equilibrium_points(:,2);
+    data.x1 = lambda(:,1);
+    data.y1 = equilibrium_points(:,2);
 
     
     configuration.ylabel = 'v_o [V]';

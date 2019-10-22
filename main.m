@@ -33,17 +33,20 @@ run system_specifications
 %   2 - Specific Circuit Model
 opt_model = 2;
 
-% Model type to simulate
-% Types of simulations:
-%   1 - General Space State System Models
-%   2 - Specific Circuit Model
+
+% Choose between continuous or discrete model
+% Options:
+%   0 - Continuous Controller
+%   1 - Discrete Controller
 opt_discrete = 1;
+
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
 opt_theorem = 1;
+
 
 % Use PWM Controled mode or default switched control
 % Options
@@ -56,12 +59,29 @@ opt_pwm = 0;
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 1;
+opt_update_equilibrium = 0;
 
+
+% Use a PI to determine and update the equilibrium point
+% Options
+%   0 - Don't use the PI
+%   1 - Update the voltage from the equilibrium point using a PI controller
+opt_equilibrium_controller = 0;
+
+
+% Choose between a constant output voltage or one with a different profile
+% Options
+%   0 - Update reference according to the profile in the simulink
+%   1 - Use constante reference
+opt_constant_reference = 1;
+
+
+% Disturbances to be applied during simulations
+% Options
+%   disturbance_Vin_enable - Enable step disturbance in the input voltage
+%   disturbance_Ro_enable - Enable step disturbance in the load resistance
 disturbance_Vin_enable = 0;
 disturbance_Ro_enable = 0;
-
-opt_constant_reference = 1;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -69,12 +89,12 @@ opt_constant_reference = 1;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck(R, Ro, Co, L);
+circuit = buck_boost(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [40];
+test_voltages = [65];
 
 simulation_duration = 1;
 
@@ -146,11 +166,6 @@ try
 
     for i=Ns:-1:1
 
-        % Convert the truct used to represent the space state to double, so it
-        % can be used in the simulink
-        [A, B, C, D, Q] = gss2double(sys);          % Continuos
-        [Ad, Bd, Cd, Dd, Qd] = gss2double(dsys);    % Discrete
-
         % Calculate the P matrix, as the equilibrium point. Calculation will be
         % in accordance with the chosen control theorem
         if opt_discrete == 0
@@ -161,8 +176,13 @@ try
                     [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:));
             end
         else
-            [P, h, xe] = calc_sys_discrete_theorem_1(sys, dsys, lambdas(i,:));
+            [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambdas(i,:));
         end
+
+        % Convert the truct used to represent the space state to double, so it
+        % can be used in the simulink
+        [A, B, C, D, Q] = gss2double(sys);          % Continuos
+        [Ad, Bd, Cd, Dd, Qd, Ld] = gss2double(dsys);    % Discrete
 
 
         % Creates a bus, wich will be used in the simulink to simplify the
@@ -170,7 +190,7 @@ try
         if opt_discrete == 0
             SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, sys.N);
         else
-            SystemDataBus = create_bus_DiscreteSystemDataBus(A, B, P, Q, sys.N, h);
+            SystemDataBus = create_bus_DiscreteSystemDataBus(Ad, Bd, P, Qd, sys.N, h, Ld);
         end
             
 
@@ -204,9 +224,9 @@ if disturbance_Ro_enable || disturbance_Vin_enable
     plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
 end
 
-figure;
-switches = logsout.get('State').Values.Data;
-Fa = abs(fft(switches));
-F = Fa(1:round(end/2));
-f = 0:1/simulation_duration:1/(2*Ti);
-plot(f,F);
+% figure;
+% switches = logsout.get('State').Values.Data;
+% Fa = abs(fft(switches));
+% F = Fa(1:round(end/2));
+% f = 0:1/simulation_duration:1/(2*Ti);
+% plot(f,F);

@@ -28,12 +28,15 @@ Vs = 65; % [V]
 x0 = [0; 0];
 
 % Main control specifications
-Tsw = 5e-5; % [s] - Modern controller maximum switching period
-% Tsw = -1; % [s] - Modern controller maximum switching period
+% Tsw = 5e-5; % [s] - Modern controller maximum switching period
+Tsw = -1; % [s] - Modern controller maximum switching period
 Fsw = 1/Tsw; % [Hz] - Modern controller maximum switching frequency
 
 Ts = 5e-5;
 
 % Parameters for dynamic reference
-Vo = 270;
+Vo = 45;
 ts = 0.2;
+
+controller_enable_time = 0.2
+rederence_pid_initial_condition = 65

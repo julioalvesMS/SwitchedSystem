@@ -4,6 +4,7 @@ classdef boost
         name = 'Boost';
         
         simulink = 'ideal_boost.slx'
+        discrete_simulink = 'discrete_boost.slx'
         
         test_voltages = 65:20:200;
         
@@ -13,8 +14,8 @@ classdef boost
         pwm_pid_ki = 39.24;
         pwm_pid_kd = 0.0;
         
-        reference_pid_kp = 2;
-        reference_pid_ki = 200;
+        reference_pid_kp = 5e-1;
+        reference_pid_ki = 50;
     end
     
     properties
@@ -56,7 +57,7 @@ classdef boost
             D{2} = D{1};
 
             Q{1} = [
-                0   0
+                1e-2   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};

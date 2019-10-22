@@ -6,7 +6,7 @@ classdef buck
         simulink = 'ideal_buck.slx'
         discrete_simulink = 'discrete_buck.slx'
         
-        test_voltages = 0:5:55;
+        test_voltages = 5:5:50;
         
         single_voltage = 60;
         
@@ -18,7 +18,7 @@ classdef buck
 %         pwm_pid_ki = 100e-2;
         
         reference_pid_kp = 5e-1;
-        reference_pid_ki = 500e-1;
+        reference_pid_ki = 100e0;
     end
     
     properties
@@ -56,8 +56,8 @@ classdef buck
             D{2} = D{1};
 
             Q{1} = [
-                1   0
-                0   1e-2
+                1e-2   0
+                0   1/self.Ro
             ];
             Q{2} = Q{1};
 

@@ -4,6 +4,7 @@ classdef buck_boost
         name = 'Buck-Boost';
         
         simulink = 'ideal_buck_boost.slx'
+        discrete_simulink = 'discrete_buck_boost.slx'
         
         test_voltages = 10:20:170;
         
@@ -56,7 +57,7 @@ classdef buck_boost
             D{2} = D{1};
 
             Q{1} = [
-                0   0
+                1e-2   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};
