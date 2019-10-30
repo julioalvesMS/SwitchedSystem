@@ -10,12 +10,12 @@ classdef buck_boost
         
         single_voltage = 120;
         
-        pwm_pid_kp = 12.8;
-        pwm_pid_ki = 39.24;
+        pwm_pid_kp = 0.123;
+        pwm_pid_ki = 28.9;
         pwm_pid_kd = 0.0;
         
-        reference_pid_kp = 1;
-        reference_pid_ki = 100;
+        reference_pid_kp = 5e-1;
+        reference_pid_ki = 100e0;
     end
     
     properties

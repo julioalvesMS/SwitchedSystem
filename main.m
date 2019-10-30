@@ -16,7 +16,7 @@ addpath(genpath('system_models'))
 addpath(genpath('scripts'))
 
 
-plot_compression_rate = 1e3;
+plot_compression_rate = 1e1;
 
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
@@ -38,28 +38,28 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = 1;
+opt_discrete = 0;
 
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 1;
+opt_theorem = 2;
 
 
 % Use PWM Controled mode or default switched control
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 0;
+opt_pwm = 1;
 
 
 % Update the equilibrium point from the system
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 0;
+opt_update_equilibrium = 1;
 
 
 % Use a PI to determine and update the equilibrium point
@@ -68,6 +68,8 @@ opt_update_equilibrium = 0;
 %   1 - Update the voltage from the equilibrium point using a PI controller
 opt_equilibrium_controller = 0;
 
+
+opt_partial_information = 0;
 
 % Choose between a constant output voltage or one with a different profile
 % Options
@@ -89,14 +91,14 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck_boost(R, Ro, Co, L);
+circuit = buck(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [65];
+test_voltages = [45];
 
-simulation_duration = 1;
+simulation_duration = 0.5;
 
 
 %% Prepare Data
@@ -135,7 +137,7 @@ else
     end
     lambdas = test_lambdas;
 
-    lambdas = [0.1 0.2 0.7];
+    lambdas = [0.4 0.2 0.4];
 end
 
 %% Simulate Converter 
@@ -202,9 +204,9 @@ try
 
         % Store only samples of the data, this will be made in order to save
         % memory use
-        sim_out(i).IL = compress_data(logsout.get('IL').Values, plot_compression_rate);
-        sim_out(i).Vout = compress_data(logsout.get('Vout').Values, plot_compression_rate);
-        sim_out(i).xe = compress_data(logsout.get('xe').Values, plot_compression_rate);
+        sim_out(i).IL = downsample(logsout.get('IL').Values, plot_compression_rate);
+        sim_out(i).Vout = downsample(logsout.get('Vout').Values, plot_compression_rate);
+        sim_out(i).xe = downsample(logsout.get('xe').Values, plot_compression_rate);
     end
 catch exception
     close(bar);

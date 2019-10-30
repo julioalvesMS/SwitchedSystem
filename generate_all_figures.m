@@ -39,10 +39,13 @@ circuit_buck_boost = buck_boost(R, Ro, Co, L);
 config_simulations = {};
 
 default_config.opt_model = 2;
+default_config.opt_discrete = 0;
 default_config.opt_theorem = 1;
 default_config.opt_pwm = 0;
-default_config.opt_update_equilibrium = 0;
-default_config.opt_constant_reference = 0;
+default_config.opt_equilibrium_controller = 0;
+default_config.opt_update_equilibrium = 1;
+default_config.opt_partial_information = 0;
+default_config.opt_constant_reference = 1;
 default_config.disturbance_Vin_enable = 0;
 default_config.disturbance_Ro_enable = 0;
 default_config.switching_period = -1;
@@ -149,7 +152,7 @@ image_folder = strcat(image_folder, '/');
 
 theo2pi_config = default_config;
 theo2pi_config.opt_theorem = 2;
-theo2pi_config.opt_update_equilibrium = 1;
+theo2pi_config.opt_equilibrium_controller = 1;
 theo2pi_config.image_folder = image_folder;
 
 % Buck
@@ -272,7 +275,7 @@ image_folder = strcat(image_folder, '/');
 
 theo2pi_config = default_config;
 theo2pi_config.opt_theorem = 2;
-theo2pi_config.opt_update_equilibrium = 1;
+theo2pi_config.opt_equilibrium_controller = 1;
 theo2pi_config.image_folder = image_folder;
 theo2pi_config.disturbance_Ro_enable = 1;
 theo2pi_config.simulation_duration = 0.6;
@@ -396,7 +399,7 @@ image_folder = strcat(image_folder, '/');
 
 theo2pi_config = default_config;
 theo2pi_config.opt_theorem = 2;
-theo2pi_config.opt_update_equilibrium = 1;
+theo2pi_config.opt_equilibrium_controller = 1;
 theo2pi_config.image_folder = image_folder;
 theo2pi_config.disturbance_Vin_enable = 1;
 theo2pi_config.simulation_duration = 0.6;
@@ -427,30 +430,40 @@ sim_N = length(config_simulations);
 
 main_bar = waitbar(0, 'Prepare the computer!!', 'name', 'Running');
 
-for sim_id=1:sim_N
-    
-    sim_config = config_simulations{sim_id};
-    
-    opt_model = sim_config.opt_model;
-    opt_theorem = sim_config.opt_theorem;
-    opt_pwm = sim_config.opt_pwm;
-    opt_update_equilibrium = sim_config.opt_update_equilibrium;
-    opt_constant_reference = sim_config.opt_constant_reference;
-    disturbance_Vin_enable = sim_config.disturbance_Vin_enable;
-    disturbance_Ro_enable = sim_config.disturbance_Ro_enable;
-    Tsw = sim_config.switching_period;
-    circuit = sim_config.circuit;
-    test_voltages = sim_config.test_voltages;
-    simulation_duration = sim_config.simulation_duration;
-    image_folder = sim_config.image_folder;
+try
+    for sim_id=1:sim_N
+
+        sim_config = config_simulations{sim_id};
+
+        opt_model = sim_config.opt_model;
+        opt_discrete = sim_config.opt_discrete;
+        opt_theorem = sim_config.opt_theorem;
+        opt_pwm = sim_config.opt_pwm;
+        opt_equilibrium_controller = sim_config.opt_equilibrium_controller;
+        opt_update_equilibrium = sim_config.opt_update_equilibrium;
+        opt_partial_information = sim_config.opt_partial_information;
+        opt_constant_reference = sim_config.opt_constant_reference;
+        disturbance_Vin_enable = sim_config.disturbance_Vin_enable;
+        disturbance_Ro_enable = sim_config.disturbance_Ro_enable;
+        Tsw = sim_config.switching_period;
+        circuit = sim_config.circuit;
+        test_voltages = sim_config.test_voltages;
+        simulation_duration = sim_config.simulation_duration;
+        image_folder = sim_config.image_folder;
 
 
-    % Update wait bar
-    waitbar((sim_id)/sim_N, main_bar, sprintf('Case %i of %d',sim_id, sim_N));
-    
-    run simulate_converter
-    
-    close all;
-    
+        % Update wait bar
+        waitbar((sim_id)/sim_N, main_bar, sprintf('Case %i of %d',sim_id, sim_N));
+
+        run simulate_converter
+
+        close all;
+
+    end
+catch exception
+    close(main_bar);
+    rethrow(exception);
 end
 close(main_bar);
+
+

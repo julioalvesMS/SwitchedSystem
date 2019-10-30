@@ -63,7 +63,7 @@ classdef buck_boost_non_inverting
             D{3} = D{1};
 
             Q{1} = [
-                0   0
+                1e-2   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};

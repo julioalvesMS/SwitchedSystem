@@ -54,12 +54,31 @@ D = sys.D{1};
 sys_ss = ss(A, B, C, D);
 
 s = tf('s');
-sys_tf = tf(sys_ss);
+sys_tf = tf(sys_ss)*Vs;
 
-Kp = 5e-2;
-Ki = 1.4e-0;
+% buck
+% Kp = 0.123;
+% Ki = 28.9;
+% Kd = 0;
+Kp = 0.162;
+Ki = 16.2;
 Kd = 0;
-N = 100;
-C_pid = Kp+Ki/s + Kd * N/(1+N/s);
 
-sisotool(sys_tf, C_pid);
+% boost
+Kp = 0.056;
+Ki = 8.39;
+Kd = 0;
+
+
+N = 100;
+C_pid = Kp + Ki/s + Kd * N/(1+N/s);
+
+%sisotool(sys_tf, C_pid);
+Cd_pid = c2d(C_pid, pwm_period);
+
+
+[num, den] = tfdata(Cd_pid);
+num = num{1};
+den = den{1};
+
+

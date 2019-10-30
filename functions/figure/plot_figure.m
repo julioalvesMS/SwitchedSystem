@@ -25,7 +25,7 @@ function plot_figure(data, configuration)
             configuration.file_name = remove_special_characters(configuration.title);
         end
         
-        saveas(gcf, strcat(configuration.folder_path, configuration.file_name, '.png'));
+        saveas(gcf, strcat(configuration.folder_path, configuration.file_name), 'svg');
     end
 end
 

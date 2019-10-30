@@ -10,12 +10,12 @@ classdef boost
         
         single_voltage = 150;
         
-        pwm_pid_kp = 12.8;
-        pwm_pid_ki = 39.24;
+        pwm_pid_kp = 0.056;
+        pwm_pid_ki = 8.39*1e-2;
         pwm_pid_kd = 0.0;
         
         reference_pid_kp = 5e-1;
-        reference_pid_ki = 50;
+        reference_pid_ki = 100e0;
     end
     
     properties

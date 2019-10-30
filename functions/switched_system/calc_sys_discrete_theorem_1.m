@@ -68,10 +68,10 @@ function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps, xe, ye)
     lmiterm([-ct,2,3,P],1,1)
     lmiterm([-ct,3,3,W],beta,1)
 
-    % Ql > W
-    ct = newlmi;
-    lmiterm([ct,1,1,W],1,1)
-    lmiterm([-ct,1,1,0],Qlamb)
+%     % Ql > W
+%     ct = newlmi;
+%     lmiterm([ct,1,1,W],1,1)
+%     lmiterm([-ct,1,1,0],Qlamb)
     
     % P > 0
     ct = newlmi;

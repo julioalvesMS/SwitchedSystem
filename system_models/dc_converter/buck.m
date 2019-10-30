@@ -10,8 +10,8 @@ classdef buck
         
         single_voltage = 60;
         
-        pwm_pid_kp = 0.5;
-        pwm_pid_ki = 0.1;
+        pwm_pid_kp = 0.15;
+        pwm_pid_ki = 15;
         pwm_pid_kd = 0;
 
 %         pwm_pid_kp = 5e-2;
