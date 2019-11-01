@@ -2,6 +2,7 @@ classdef buck_boost
     
     properties (Constant = true) 
         name = 'Buck-Boost';
+        class_name = 'BuckBoost';
         
         simulink = 'ideal_buck_boost.slx'
         discrete_simulink = 'discrete_buck_boost.slx'

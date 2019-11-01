@@ -21,6 +21,8 @@ plot_compression_rate = 1e1;
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
+
+s = tf('s')
 %% System Specifications
 
 run system_specifications
@@ -52,7 +54,7 @@ opt_theorem = 2;
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 1;
+opt_pwm = 0;
 
 
 % Update the equilibrium point from the system
@@ -66,7 +68,7 @@ opt_update_equilibrium = 1;
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = 0;
+opt_equilibrium_controller = 1;
 
 
 opt_partial_information = 0;
@@ -91,12 +93,12 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck(R, Ro, Co, L);
+circuit = boost(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 
-test_voltages = [45];
+test_voltages = [190];
 
 simulation_duration = 0.5;
 

@@ -41,6 +41,8 @@ Ns = size(lambdas, 1);
 
 bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
+clear sim_out
+
 try
     load_system(model);
 

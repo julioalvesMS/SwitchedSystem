@@ -2,7 +2,7 @@
 
 % Simulation specifications
 Ti=1e-6; % [s] - Simulation pace
-pwm_period = 1e-4; % [s] PWM period
+pwm_period = 5e-5; % [s] PWM period
 pwm_sample_time = 1e-6;
 
 sensor_sample = 3e-5;
@@ -38,5 +38,4 @@ Ts = 5e-5;
 Vo = 45;
 ts = 0.2;
 
-controller_enable_time = 0.2
 rederence_pid_initial_condition = 65

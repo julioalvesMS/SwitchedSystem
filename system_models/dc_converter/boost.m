@@ -2,20 +2,23 @@ classdef boost
     
     properties (Constant = true) 
         name = 'Boost';
+        class_name = 'Boost';
         
         simulink = 'ideal_boost.slx'
         discrete_simulink = 'discrete_boost.slx'
         
-        test_voltages = 65:20:200;
+        test_voltages = 80:20:200;
         
         single_voltage = 150;
         
-        pwm_pid_kp = 0.056;
-        pwm_pid_ki = 8.39*1e-2;
+        pwm_pid_kp = 0.0203;
+        pwm_pid_ki = 4.77;
         pwm_pid_kd = 0.0;
         
         reference_pid_kp = 5e-1;
         reference_pid_ki = 100e0;
+        
+        % Gi = ((Ve/L)*s + (1-d)*Ie/(L*Co))/(s^2 - R*s/L + (1-d)^2/L*Co);
     end
     
     properties
