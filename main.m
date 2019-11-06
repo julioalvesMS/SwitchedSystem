@@ -93,14 +93,15 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = boost(R, Ro, Co, L);
+circuit = buck(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
+test_voltages = circuit.single_voltage;
 
-test_voltages = [190];
+% test_voltages = [190];
 
-simulation_duration = 0.5;
+simulation_duration = 0.15;
 
 
 %% Prepare Data
@@ -209,6 +210,7 @@ try
         sim_out(i).IL = downsample(logsout.get('IL').Values, plot_compression_rate);
         sim_out(i).Vout = downsample(logsout.get('Vout').Values, plot_compression_rate);
         sim_out(i).xe = downsample(logsout.get('xe').Values, plot_compression_rate);
+        sim_out(i).Vref = downsample(logsout.get('Vref').Values, plot_compression_rate);
     end
 catch exception
     close(bar);
@@ -224,8 +226,12 @@ plot_voltage_time(sim_out, circuit.name, image_folder);
 
 plot_current_time(sim_out, circuit.name, image_folder);
 
-if disturbance_Ro_enable || disturbance_Vin_enable
+if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
+end
+
+if disturbance_Ro_enable == 1
+    plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 
 % figure;

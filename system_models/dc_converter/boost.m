@@ -15,8 +15,8 @@ classdef boost
         pwm_pid_ki = 4.77;
         pwm_pid_kd = 0.0;
         
-        reference_pid_kp = 5e-1;
-        reference_pid_ki = 100e0;
+        reference_pid_kp = 3;
+        reference_pid_ki = 15.3;
         
         % Gi = ((Ve/L)*s + (1-d)*Ie/(L*Co))/(s^2 - R*s/L + (1-d)^2/L*Co);
     end

@@ -9,7 +9,7 @@ classdef buck
         
         test_voltages = 5:5:50;
         
-        single_voltage = 60;
+        single_voltage = 40;
         
 %         pwm_pid_kp = 0.123;
 %         pwm_pid_ki = 28.9;
@@ -25,8 +25,8 @@ classdef buck
 %         pwm_pid_kp = 5e-2;
 %         pwm_pid_ki = 100e-2;
         
-        reference_pid_kp = 5e-1;
-        reference_pid_ki = 100e0;
+        reference_pid_kp = 1;
+        reference_pid_ki = 100;
     end
     
     properties
