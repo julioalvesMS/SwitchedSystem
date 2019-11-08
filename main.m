@@ -54,7 +54,7 @@ opt_theorem = 2;
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 0;
+opt_pwm = 1;
 
 
 % Update the equilibrium point from the system
@@ -93,7 +93,7 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck(R, Ro, Co, L);
+circuit = buck_boost(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
@@ -101,7 +101,7 @@ test_voltages = circuit.single_voltage;
 
 % test_voltages = [190];
 
-simulation_duration = 0.15;
+simulation_duration = 0.5;
 
 
 %% Prepare Data

@@ -68,7 +68,7 @@ image_folder = strcat(image_folder, '/');
 pwm_config = default_config;
 pwm_config.opt_pwm = 1;
 pwm_config.image_folder = image_folder;
-pwm_config.simulation_duration = 0.1;
+pwm_config.simulation_duration = 0.4;
 
 % Buck
 new_sim = pwm_config;

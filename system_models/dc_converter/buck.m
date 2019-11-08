@@ -18,7 +18,7 @@ classdef buck
 %         pwm_pid_kp = 0.0203;
 %         pwm_pid_ki = 4.77;
         pwm_pid_kp = 0.01;
-        pwm_pid_ki = 0.977;
+        pwm_pid_ki = 1;
 
         pwm_pid_kd = 0;
 
