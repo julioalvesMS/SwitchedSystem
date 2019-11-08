@@ -2,8 +2,10 @@ classdef buck_boost_non_inverting
     
     properties (Constant = true) 
         name = 'Buck-Boost Bidirecional';
+        class_name = 'BuckBoost3';
         
         simulink = 'ideal_buck_boost_non_inverter.slx'
+        discrete_simulink = 'discrete_buck_boost_non_inverter.slx'
         
         test_voltages = 10:20:170;
         

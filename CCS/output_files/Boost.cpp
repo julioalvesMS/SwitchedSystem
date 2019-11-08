@@ -26,10 +26,10 @@
             //
             // Boost Converter - Discrete Rule 1
             //
-            P[0][0] = 2.91295e-06;
-            P[0][1] = 1.6538e-06;
-            P[1][0] = 1.6538e-06;
-            P[1][1] = 8.80047e-06;
+            P[0][0] = 2.91485e-06;
+            P[0][1] = 1.6548e-06;
+            P[1][0] = 1.6548e-06;
+            P[1][1] = 8.81002e-06;
             break;
 
         default:
@@ -46,8 +46,8 @@
             //
             // Boost Converter - Discrete Rule 1
             //
-            h[0] = 6.01166e-06;
-            h[1] = 9.7411e-06;
+            h[0] = 6.0156e-06;
+            h[1] = 9.74712e-06;
             break;
 
         default:
@@ -56,7 +56,7 @@
     }
 
 
-    double Buck::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])
+    double Boost::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])
     {
         double d = 0;
 
@@ -66,7 +66,7 @@
             //
             // Boost Converter - Discrete Rule 1
             //
-            d = 1.75003e-05;
+            d = 1.7509e-05;
             break;
 
         default:
@@ -74,6 +74,26 @@
         }
 
         return d;
+    }
+
+
+    void Boost::GetClassicController(double num[2], double den[2])
+    {
+        num[0] = 0.0203;
+        num[1] = -0.0200615;
+
+        den[0] = 1;
+        den[1] = -1;
+    }
+
+
+    void Boost::GetReferenceController(double num[2], double den[2])
+    {
+        num[0] = 3;
+        num[1] = -2.9847;
+
+        den[0] = 1;
+        den[1] = -1;
     }
 
 
@@ -110,7 +130,7 @@
         //
         // =============== Subsystem 2 ===============
         //
-        subSys = &(discreteSystem.subSystems[0]);
+        subSys = &(discreteSystem.subSystems[1]);
 
         //
         // Subsystem 2 -- Matrix A

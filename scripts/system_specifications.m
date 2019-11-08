@@ -38,4 +38,6 @@ Ts = 5e-5;
 Vo = 45;
 ts = 0.2;
 
+Tref = 1e-3;
+
 rederence_pid_initial_condition = 65

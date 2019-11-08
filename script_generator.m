@@ -32,12 +32,13 @@ run system_specifications
 circuit_buck = buck(R, Ro, Co, L);
 circuit_boost = boost(R, Ro, Co, L);
 circuit_buck_boost = buck_boost(R, Ro, Co, L);
+circuit_buck_boost_3_stage = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 %% Run PWM
 
 
-config_converters = {circuit_buck, circuit_boost, circuit_buck_boost};
+config_converters = {circuit_buck, circuit_boost, circuit_buck_boost, circuit_buck_boost_3_stage};
 
 
 %%
@@ -47,7 +48,11 @@ for conv_id=1:length(config_converters)
     circuit = config_converters{conv_id};
     run load_circuit_sys
     
-    lambdas = generate_lambda_voltage(sys, circuit.single_voltage);
+    if sys.N == 2
+        lambdas = generate_lambda_voltage(sys, circuit.single_voltage);
+    else
+        lambdas = [0.4 0.2 0.4];
+    end
 
     % Calculate the P matrix, as the equilibrium point. Calculation will be
     % in accordance with the chosen control theorem
@@ -63,11 +68,15 @@ for conv_id=1:length(config_converters)
     fnc_getH = gen_fnc_getH(circuit.class_name, hd1);
     fnc_getD = gen_fnc_getD(circuit.class_name, dd1);
     fnc_DefineDiscreteSystem = gen_fnc_DefineDiscreteSystem(dsys);
+    fnc_getClassicController = gen_fnc_getClassicController(circuit, pwm_period);
+    fnc_getReferenceController = gen_fnc_getReferenceController(circuit, Tref);
     
     file_fnc = {
         fnc_getP
         fnc_getH
         fnc_getD
+        fnc_getClassicController
+        fnc_getReferenceController
         fnc_DefineDiscreteSystem
         };
     

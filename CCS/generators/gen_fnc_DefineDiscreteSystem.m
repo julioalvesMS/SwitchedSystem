@@ -12,7 +12,7 @@ for i=1:dsys.N
     "        //"
     "        // =============== Subsystem "+id+" ==============="
     "        //"
-    "        subSys = &(discreteSystem.subSystems[0]);"
+    "        subSys = &(discreteSystem.subSystems[" + sprintf("%d", i-1) + "]);"
     ""
     "        //"
     "        // Subsystem "+id+" -- Matrix A"

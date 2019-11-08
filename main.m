@@ -40,21 +40,21 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = 0;
+opt_discrete = 1;
 
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 2;
+opt_theorem = 1;
 
 
 % Use PWM Controled mode or default switched control
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 1;
+opt_pwm = 0;
 
 
 % Update the equilibrium point from the system
@@ -93,7 +93,7 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck_boost(R, Ro, Co, L);
+circuit = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
@@ -121,7 +121,7 @@ run circuit_disturbance
 
 %% Lambdas to simulate
 
-if length(sys.A) == 2
+if sys.N == 2
     lambdas = generate_lambda_voltage(sys, test_voltages);
 else
 

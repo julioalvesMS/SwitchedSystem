@@ -1,6 +1,6 @@
 function [str] = gen_fnc_getD(class, dd1)
     y = {
-"    double Buck::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])"
+"    double " + class + "::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])"
 "    {"
 "        double d = 0;"
 ""

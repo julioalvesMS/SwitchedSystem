@@ -6,30 +6,30 @@
             //
             // BuckBoost Converter - Rule 1
             //
-            P[0][0] = 4.46148e-05;
-            P[0][1] = 2.7068e-05;
-            P[1][0] = 2.7068e-05;
-            P[1][1] = 8.84768e-05;
+            P[0][0] = 4.48917e-05;
+            P[0][1] = 2.12726e-05;
+            P[1][0] = 2.12726e-05;
+            P[1][1] = 7.42982e-05;
             break;
 
         case CS_CONTINUOUS_THEOREM_2:
             //
             // BuckBoost Converter - Rule 2
             //
-            P[0][0] = 0.00097187;
-            P[0][1] = 5.83991e-07;
-            P[1][0] = 5.83991e-07;
-            P[1][1] = 0.00112501;
+            P[0][0] = 0.000972027;
+            P[0][1] = 5.07287e-07;
+            P[1][0] = 5.07287e-07;
+            P[1][1] = 0.001125;
             break;
 
         case CS_DISCRETE_THEOREM_1:
             //
             // BuckBoost Converter - Discrete Rule 1
             //
-            P[0][0] = 2.08316e-06;
-            P[0][1] = 1.44191e-06;
-            P[1][0] = 1.44191e-06;
-            P[1][1] = 7.59767e-06;
+            P[0][0] = 3.04753e-06;
+            P[0][1] = 1.59905e-06;
+            P[1][0] = 1.59905e-06;
+            P[1][1] = 8.8219e-06;
             break;
 
         default:
@@ -46,8 +46,8 @@
             //
             // BuckBoost Converter - Discrete Rule 1
             //
-            h[0] = 5.90434e-06;
-            h[1] = 1.19348e-05;
+            h[0] = 5.93261e-06;
+            h[1] = 9.22972e-06;
             break;
 
         default:
@@ -56,7 +56,7 @@
     }
 
 
-    double Buck::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])
+    double BuckBoost::GetD(double P[SYSTEM_ORDER][SYSTEM_ORDER], double h[SYSTEM_ORDER])
     {
         double d = 0;
 
@@ -66,7 +66,7 @@
             //
             // BuckBoost Converter - Discrete Rule 1
             //
-            d = 2.60671e-05;
+            d = 1.6236e-05;
             break;
 
         default:
@@ -74,6 +74,26 @@
         }
 
         return d;
+    }
+
+
+    void BuckBoost::GetClassicController(double num[2], double den[2])
+    {
+        num[0] = 0.002;
+        num[1] = -0.00199;
+
+        den[0] = 1;
+        den[1] = -1;
+    }
+
+
+    void BuckBoost::GetReferenceController(double num[2], double den[2])
+    {
+        num[0] = 3;
+        num[1] = -2.9847;
+
+        den[0] = 1;
+        den[1] = -1;
     }
 
 
@@ -96,8 +116,8 @@
         //
         // Subsystem 1 -- Matrix B
         //
-        subSys->L[0] = 0.0246607;
-        subSys->L[1] = -0.000417567;
+        subSys->L[0] = 0.0250089;
+        subSys->L[1] = -0.000279266;
         //
         // Subsystem 1 -- Matrix Q
         //
@@ -110,7 +130,7 @@
         //
         // =============== Subsystem 2 ===============
         //
-        subSys = &(discreteSystem.subSystems[0]);
+        subSys = &(discreteSystem.subSystems[1]);
 
         //
         // Subsystem 2 -- Matrix A
@@ -122,8 +142,8 @@
         //
         // Subsystem 2 -- Matrix B
         //
-        subSys->L[0] = -0.0471212;
-        subSys->L[1] = 0.00079788;
+        subSys->L[0] = -0.0314279;
+        subSys->L[1] = 0.000350945;
         //
         // Subsystem 2 -- Matrix Q
         //

@@ -2,7 +2,7 @@ function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, d, xi)
 %BuscaDicotomica Summary of this function goes here
 %   Detailed explanation goes here
 
-    l = (superior-inferior)/1e15;
+    l = (superior-inferior)/1e20;
     %l = 1e-10;
     
     multidimensional = 0;
