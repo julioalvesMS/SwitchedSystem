@@ -71,7 +71,7 @@ opt_update_equilibrium = 1;
 opt_equilibrium_controller = 0;
 
 
-opt_partial_information = 0;
+opt_partial_information = 1;
 
 % Choose between a constant output voltage or one with a different profile
 % Options
