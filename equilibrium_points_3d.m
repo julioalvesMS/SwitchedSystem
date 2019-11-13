@@ -62,6 +62,30 @@ end
 
 %% Analysis
 
+figure
 plot(equilibrium(:,1), equilibrium(:,2), 'd')
+ylabel('v_o [V]');
+xlabel('IL [A]');
+saveas(gcf, strcat(image_folder, 'equilibrium'), 'eps')
+
 % plot_voltage_current_equilibrium(equilibrium, circuit.name, image_folder);
 % plot_voltage_lambda_equilibrium(equilibrium, sample_lambdas, circuit.name, image_folder);
+
+%%
+X = equilibrium(:,1);
+Y = equilibrium(:,2);
+
+X0 = min(X);
+XF = max(X);
+
+XP = X0:(XF-X0)/1e4:XF;
+
+XR = X0:(XF-X0)/1e2:XF;
+
+f=fit(X,Y,'poly6')
+
+figure
+hold on
+plot(equilibrium(:,1), equilibrium(:,2), 'd')
+plot(XP, f(XP), '--r')
+hold off

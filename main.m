@@ -52,7 +52,7 @@ opt_theorem = 2;
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 1;
+opt_pwm = 0;
 
 
 % Update the equilibrium point from the system
@@ -69,7 +69,7 @@ opt_update_equilibrium = 1;
 opt_equilibrium_controller = 0;
 
 
-opt_partial_information = 0;
+opt_partial_information = 1;
 
 % Choose between a constant output voltage or one with a different profile
 % Options
@@ -91,7 +91,7 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck(R, Ro, Co, L);
+circuit = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
