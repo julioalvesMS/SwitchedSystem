@@ -40,7 +40,7 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = 1;
+opt_discrete = 0;
 
 
 % Desired Theorem to use
@@ -68,7 +68,7 @@ opt_update_equilibrium = 1;
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = 1;
+opt_equilibrium_controller = 0;
 
 
 opt_partial_information = 0;
@@ -77,7 +77,7 @@ opt_partial_information = 0;
 % Options
 %   0 - Update reference according to the profile in the simulink
 %   1 - Use constante reference
-opt_constant_reference = 1;
+opt_constant_reference = 0;
 
 
 % Disturbances to be applied during simulations
@@ -226,11 +226,11 @@ plot_voltage_time(sim_out, circuit.name, image_folder);
 
 plot_current_time(sim_out, circuit.name, image_folder);
 
-if disturbance_Vin_enable == 1
+if disturbance_Ro_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
 end
 
-if disturbance_Ro_enable == 1
+if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 

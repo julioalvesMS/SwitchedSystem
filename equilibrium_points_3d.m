@@ -52,7 +52,7 @@ for lambda1=sequence
     end
 end
 
-% Calculate the equilibrium point for each lambda sample
+% Calculate the equilibrium point for each lambda sample 
 for i=size(test_lambdas, 1):-1:1
     [Al, Bl, ~] = calc_sys_lambda(sys, test_lambdas(i,:));
     xe = -Al\Bl*sys.U;

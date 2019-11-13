@@ -18,9 +18,8 @@ function [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
     end
     
     P = I;
-    
     for i=1:100
-        R = solve_R_lmi(dsys, Al, Ql, lambda, P, xe, ye);
+        R = solve_R_lmi(dsys, Al, lambda, P, xe, ye, 1e5);
         
         if abs(trace(P\(R-P))) < E
             break;
@@ -37,7 +36,7 @@ function [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
 end
 
 
-function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps, xe, ye)
+function Rs = solve_R_lmi(sys, Alamb, lambda, Ps, xe, ye, beta)
 
     nx = size(Alamb,1);
 
@@ -47,7 +46,6 @@ function Rs = solve_R_lmi(sys, Alamb, Qlamb, lambda, Ps, xe, ye)
     % declaracao de variveis
     P = lmivar(1,[nx 1]);
     W = lmivar(1,[nx 1]);
-    beta = 1e5;
     
     % \sum ?i Ai P Ai ?P < ?W
     ct = newlmi;
