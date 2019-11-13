@@ -21,6 +21,8 @@ plot_compression_rate = 1e1;
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
+
+s = tf('s')
 %% System Specifications
 
 run system_specifications
@@ -38,14 +40,14 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = 0;
+opt_discrete = 1;
 
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 2;
+opt_theorem = 1;
 
 
 % Use PWM Controled mode or default switched control
@@ -66,7 +68,7 @@ opt_update_equilibrium = 1;
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = 0;
+opt_equilibrium_controller = 1;
 
 
 opt_partial_information = 1;
@@ -95,8 +97,9 @@ circuit = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
+test_voltages = circuit.single_voltage;
 
-test_voltages = [45];
+% test_voltages = [190];
 
 simulation_duration = 0.5;
 
@@ -118,7 +121,7 @@ run circuit_disturbance
 
 %% Lambdas to simulate
 
-if length(sys.A) == 2
+if sys.N == 2
     lambdas = generate_lambda_voltage(sys, test_voltages);
 else
 
@@ -207,6 +210,7 @@ try
         sim_out(i).IL = downsample(logsout.get('IL').Values, plot_compression_rate);
         sim_out(i).Vout = downsample(logsout.get('Vout').Values, plot_compression_rate);
         sim_out(i).xe = downsample(logsout.get('xe').Values, plot_compression_rate);
+        sim_out(i).Vref = downsample(logsout.get('Vref').Values, plot_compression_rate);
     end
 catch exception
     close(bar);
@@ -222,8 +226,12 @@ plot_voltage_time(sim_out, circuit.name, image_folder);
 
 plot_current_time(sim_out, circuit.name, image_folder);
 
-if disturbance_Ro_enable || disturbance_Vin_enable
+if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
+end
+
+if disturbance_Ro_enable == 1
+    plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 
 % figure;

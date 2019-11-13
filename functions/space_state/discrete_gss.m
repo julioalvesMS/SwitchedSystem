@@ -5,7 +5,7 @@ function dsys = discrete_gss(sys, T)
     n = length(sys.A{1});
     
     dsys = sys;
-    for i=1:n
+    for i=1:sys.N
         dsys.A{i} = expm(sys.A{i}*T);
         dsys.B{i} = (expm(sys.A{i}*T) - eye(n))/sys.A{i}*sys.B{i};
         dsys.L{i} = zeros(size(dsys.B{i}));

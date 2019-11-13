@@ -2,23 +2,31 @@ classdef buck
     
     properties (Constant = true) 
         name = 'Buck';
+        class_name = 'Buck';
         
         simulink = 'ideal_buck.slx'
         discrete_simulink = 'discrete_buck.slx'
         
         test_voltages = 5:5:50;
         
-        single_voltage = 60;
+        single_voltage = 40;
         
-        pwm_pid_kp = 0.15;
-        pwm_pid_ki = 15;
+%         pwm_pid_kp = 0.123;
+%         pwm_pid_ki = 28.9;
+%         pwm_pid_kp = 0.0062;
+%         pwm_pid_ki = 0.909;
+%         pwm_pid_kp = 0.0203;
+%         pwm_pid_ki = 4.77;
+        pwm_pid_kp = 0.01;
+        pwm_pid_ki = 1;
+
         pwm_pid_kd = 0;
 
 %         pwm_pid_kp = 5e-2;
 %         pwm_pid_ki = 100e-2;
         
-        reference_pid_kp = 5e-1;
-        reference_pid_ki = 100e0;
+        reference_pid_kp = 1;
+        reference_pid_ki = 100;
     end
     
     properties

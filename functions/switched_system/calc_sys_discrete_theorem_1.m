@@ -4,7 +4,7 @@ function [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
 %   Returns the system, P matrix and the equilibrium points
     
     E = 1e-3;
-    I = eye(length(dsys.A));
+    I = eye(length(dsys.A{1}));
     
     [Alc, Blc] = calc_sys_lambda(sys, lambda);
     ye = -Alc\Blc*sys.U;
@@ -12,7 +12,7 @@ function [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
     [Al, Bl, Ql] = calc_sys_lambda(dsys, lambda);
     xe = -(Al-I)\Bl*dsys.U;
     
-    for i=1:length(dsys.l)
+    for i=1:dsys.N
         dsys.L{i} = -(dsys.A{i}-I)*((Al-I)\Bl) + dsys.B{i};
         dsys.l{i} = (dsys.A{i}-I)*xe + dsys.B{i}*dsys.U;
     end

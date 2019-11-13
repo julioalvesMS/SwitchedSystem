@@ -17,8 +17,8 @@ function plot_voltage_time(sim_out, name, folder)
     for i=length(sim_out):-1:1
         data(i).x1 = sim_out(i).Vout.Time*1e3;
         data(i).y1 = sim_out(i).Vout.Data;
-        data(i).x2 = sim_out(i).xe.Time*1e3;
-        data(i).y2 = sim_out(i).xe.Data(:,2);
+        data(i).x2 = sim_out(i).Vref.Time*1e3;
+        data(i).y2 = sim_out(i).Vref.Data;
     end
     
     configuration.ylabel = 'v_o [V]';

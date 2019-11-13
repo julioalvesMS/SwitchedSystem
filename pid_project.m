@@ -32,7 +32,7 @@ run system_specifications
 %   buck
 %   boost
 %   buck_boost
-circuit = buck(R, Ro, Co, L);
+circuit = boost(R, Ro, Co, L);
 
 % Lambda used to create the mean system with wich the controle will be
 % designed
@@ -47,34 +47,64 @@ run load_circuit_sys
 %% System Equilibrium Points
 
 [A, B] = calc_sys_lambda(sys, lambda);
-
 C = sys.C{1};
 D = sys.D{1};
+
+xe = -A\B*Vs;
+Ie = xe(1);
+Ve = xe(2);
 
 sys_ss = ss(A, B, C, D);
 
 s = tf('s');
-sys_tf = tf(sys_ss)*Vs;
+sys_tf = tf(sys_ss);
 
 % buck
-% Kp = 0.123;
-% Ki = 28.9;
-% Kd = 0;
-Kp = 0.162;
-Ki = 16.2;
+Kp = 0.123;
+Ki = 28.9;
 Kd = 0;
+% Kp = 0.0062;
+% Ki = 0.909;
+% Kd = 0;
 
 % boost
-Kp = 0.056;
-Ki = 8.39;
-Kd = 0;
-
+iKp = 0.0203;
+iKi = 4.77;
+iKd = 0;
+vKp = 0.316;
+vKi = 3.23;
+vKd = 0;
 
 N = 100;
-C_pid = Kp + Ki/s + Kd * N/(1+N/s);
+Ci_pid = iKp + iKi/s + iKd * N/(1+N/s);
 
-%sisotool(sys_tf, C_pid);
-Cd_pid = c2d(C_pid, pwm_period);
+% Boost - Corrente/Duty
+d = 0.5;
+Gi = ((Ve/L)*s + (1-d)*Ie/(L*Co))/(s^2 - R*s/L + (1-d)^2/L*Co); 
+
+% sisotool(Gi, Ci_pid);
+
+Fi = feedback(Gi*Ci_pid,1)
+
+Cv_pid = vKp + vKi/s + vKd * N/(1+N/s);
+
+% sisotool(Fi, Cv_pid);
+
+
+% Buck
+Kb = Vs/(L*Co);
+a1 = Ro/Co;
+a2 = 1/(L*Co);
+G = tf([0 Kb],[1 a1 a2])*Vs;
+
+C_buck = Kp + Ki/s + Kd * N/(1+N/s);
+
+sisotool(G, C_buck)
+
+
+
+
+Cd_pid = c2d(Ci_pid, pwm_period);
 
 
 [num, den] = tfdata(Cd_pid);

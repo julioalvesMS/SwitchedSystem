@@ -25,6 +25,8 @@ Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
 run system_specifications
 
+run circuit_disturbance
+
 %% Default Parameters
 
 % Desired DC-DC converter to use
@@ -48,6 +50,8 @@ default_config.opt_partial_information = 0;
 default_config.opt_constant_reference = 1;
 default_config.disturbance_Vin_enable = 0;
 default_config.disturbance_Ro_enable = 0;
+default_config.disturbance_Vin_time = disturbance_Vin_time;
+default_config.disturbance_Ro_time = disturbance_Ro_time;
 default_config.switching_period = -1;
 default_config.circuit = [];
 default_config.test_voltages = [];
@@ -64,7 +68,7 @@ image_folder = strcat(image_folder, '/');
 pwm_config = default_config;
 pwm_config.opt_pwm = 1;
 pwm_config.image_folder = image_folder;
-pwm_config.simulation_duration = 0.1;
+pwm_config.simulation_duration = 0.4;
 
 % Buck
 new_sim = pwm_config;
@@ -93,7 +97,7 @@ image_folder = strcat(image_folder, '/');
 theo1_config = default_config;
 theo1_config.opt_theorem = 1;
 theo1_config.image_folder = image_folder;
-theo1_config.simulation_duration = 0.05;
+theo1_config.simulation_duration = 0.1;
 
 % Buck
 new_sim = theo1_config;
@@ -128,19 +132,21 @@ theo2_config.image_folder = image_folder;
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
-new_sim.simulation_duration = 0.05;
+new_sim.simulation_duration = 0.15;
 config_simulations{end+1} = new_sim;
 
 % Boost
 new_sim = theo2_config;
 new_sim.circuit = circuit_boost;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
+new_sim.simulation_duration = 1.5;
 config_simulations{end+1} = new_sim;
 
 % Buck-Boost
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck_boost;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
+new_sim.simulation_duration = 1.5;
 config_simulations{end+1} = new_sim;
 
 
@@ -159,19 +165,21 @@ theo2pi_config.image_folder = image_folder;
 new_sim = theo2pi_config;
 new_sim.circuit = circuit_buck;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
-new_sim.simulation_duration = 0.1;
+new_sim.simulation_duration = 0.15;
 config_simulations{end+1} = new_sim;
 
 % Boost
 new_sim = theo2pi_config;
 new_sim.circuit = circuit_boost;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
+new_sim.simulation_duration = 0.7;
 config_simulations{end+1} = new_sim;
 
 % Buck-Boost
 new_sim = theo2pi_config;
 new_sim.circuit = circuit_buck_boost;
 new_sim.test_voltages = new_sim.circuit.test_voltages;
+new_sim.simulation_duration = 0.7;
 config_simulations{end+1} = new_sim;
 
 
@@ -215,7 +223,8 @@ theo1_config = default_config;
 theo1_config.opt_theorem = 1;
 theo1_config.image_folder = image_folder;
 theo1_config.disturbance_Ro_enable = 1;
-theo1_config.simulation_duration = 0.6;
+theo1_config.disturbance_Ro_time = 0.25;
+theo1_config.simulation_duration = 0.45;
 
 % Buck
 new_sim = theo1_config;
@@ -246,24 +255,29 @@ theo2_config = default_config;
 theo2_config.opt_theorem = 2;
 theo2_config.image_folder = image_folder;
 theo2_config.disturbance_Ro_enable = 1;
-theo2_config.simulation_duration = 0.6;
 
 % Buck
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
+new_sim.disturbance_Ro_time = 0.2;
+new_sim.simulation_duration = 0.45;
 config_simulations{end+1} = new_sim;
 
 % Boost
 new_sim = theo2_config;
 new_sim.circuit = circuit_boost;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
+new_sim.disturbance_Ro_time = 1.8;
+new_sim.simulation_duration = 2;
 config_simulations{end+1} = new_sim;
 
 % Buck-Boost
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck_boost;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
+new_sim.disturbance_Ro_time = 1.8;
+new_sim.simulation_duration = 2;
 config_simulations{end+1} = new_sim;
 
 
@@ -278,7 +292,7 @@ theo2pi_config.opt_theorem = 2;
 theo2pi_config.opt_equilibrium_controller = 1;
 theo2pi_config.image_folder = image_folder;
 theo2pi_config.disturbance_Ro_enable = 1;
-theo2pi_config.simulation_duration = 0.6;
+theo2pi_config.simulation_duration = 0.7;
 
 % Buck
 new_sim = theo2pi_config;
@@ -339,6 +353,7 @@ theo1_config = default_config;
 theo1_config.opt_theorem = 1;
 theo1_config.image_folder = image_folder;
 theo1_config.disturbance_Vin_enable = 1;
+theo1_config.disturbance_Vin_time = 0.25;
 theo1_config.simulation_duration = 0.6;
 
 % Buck
@@ -370,24 +385,29 @@ theo2_config = default_config;
 theo2_config.opt_theorem = 2;
 theo2_config.image_folder = image_folder;
 theo2_config.disturbance_Vin_enable = 1;
-theo2_config.simulation_duration = 0.6;
 
 % Buck
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
+new_sim.disturbance_Vin_time = 0.2;
+new_sim.simulation_duration = 0.45;
 config_simulations{end+1} = new_sim;
 
 % Boost
 new_sim = theo2_config;
 new_sim.circuit = circuit_boost;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
+new_sim.disturbance_Vin_time = 1.8;
+new_sim.simulation_duration = 2;
 config_simulations{end+1} = new_sim;
 
 % Buck-Boost
 new_sim = theo2_config;
 new_sim.circuit = circuit_buck_boost;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
+new_sim.disturbance_Vin_time = 1.8;
+new_sim.simulation_duration = 2;
 config_simulations{end+1} = new_sim;
 
 
@@ -402,7 +422,7 @@ theo2pi_config.opt_theorem = 2;
 theo2pi_config.opt_equilibrium_controller = 1;
 theo2pi_config.image_folder = image_folder;
 theo2pi_config.disturbance_Vin_enable = 1;
-theo2pi_config.simulation_duration = 0.6;
+theo2pi_config.simulation_duration = 0.7;
 
 % Buck
 new_sim = theo2pi_config;
@@ -445,6 +465,8 @@ try
         opt_constant_reference = sim_config.opt_constant_reference;
         disturbance_Vin_enable = sim_config.disturbance_Vin_enable;
         disturbance_Ro_enable = sim_config.disturbance_Ro_enable;
+        disturbance_Vin_time = sim_config.disturbance_Vin_time;
+        disturbance_Ro_time = sim_config.disturbance_Ro_time;
         Tsw = sim_config.switching_period;
         circuit = sim_config.circuit;
         test_voltages = sim_config.test_voltages;
