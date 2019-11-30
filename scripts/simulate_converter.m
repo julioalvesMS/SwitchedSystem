@@ -82,10 +82,10 @@ try
 
         % Store only samples of the data, this will be made in order to save
         % memory use
-        sim_out(i).IL = downsample(logsout.get('IL').Values, plot_compression_rate);
-        sim_out(i).Vout = downsample(logsout.get('Vout').Values, plot_compression_rate);
-        sim_out(i).xe = downsample(logsout.get('xe').Values, plot_compression_rate);
-        sim_out(i).Vref = downsample(logsout.get('Vref').Values, plot_compression_rate);
+        sim_out(i).IL = downsample_timeseries(logsout.get('IL').Values, plot_compression_rate);
+        sim_out(i).Vout = downsample_timeseries(logsout.get('Vout').Values, plot_compression_rate);
+        sim_out(i).xe = downsample_timeseries(logsout.get('xe').Values, plot_compression_rate);
+        sim_out(i).Vref = downsample_timeseries(logsout.get('Vref').Values, plot_compression_rate);
     end
 catch exception
     close(bar);

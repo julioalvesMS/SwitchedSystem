@@ -14,16 +14,24 @@ function plot_voltage_time(sim_out, name, folder)
     
     configuration.title = strcat(name, ' - Tensão x Tempo');
 
+    tmp_legends = cell(1,length(sim_out)*2);
+    
     for i=length(sim_out):-1:1
         data(i).x1 = sim_out(i).Vout.Time*1e3;
         data(i).y1 = sim_out(i).Vout.Data;
         data(i).x2 = sim_out(i).Vref.Time*1e3;
         data(i).y2 = sim_out(i).Vref.Data;
+        tmp_legends{2*i-1} = 'Vo';
+        tmp_legends{2*i} = 'Vref';
     end
+    
+%     configuration.legend = tmp_legends;
     
     configuration.ylabel = 'v_o [V]';
     configuration.xlabel = 't [ms]';
     
+    configuration.file_name = remove_special_characters(strcat(name, ' - Tensão x Tempo'));
+
     plot_figure(data, configuration);
 end
 

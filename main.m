@@ -16,7 +16,7 @@ addpath(genpath('system_models'))
 addpath(genpath('scripts'))
 
 
-plot_compression_rate = 1e1;
+plot_compression_rate = 1e0;
 
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
@@ -47,7 +47,7 @@ opt_discrete = 0;
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 1;
+opt_theorem = 2;
 
 
 % Use PWM Controled mode or default switched control
@@ -71,13 +71,13 @@ opt_update_equilibrium = 1;
 opt_equilibrium_controller = 0;
 
 
-opt_partial_information = 1;
+opt_partial_information = 0;
 
 % Choose between a constant output voltage or one with a different profile
 % Options
 %   0 - Update reference according to the profile in the simulink
 %   1 - Use constante reference
-opt_constant_reference = 0;
+opt_constant_reference = 1;
 
 
 % Disturbances to be applied during simulations
@@ -85,7 +85,7 @@ opt_constant_reference = 0;
 %   disturbance_Vin_enable - Enable step disturbance in the input voltage
 %   disturbance_Ro_enable - Enable step disturbance in the load resistance
 disturbance_Vin_enable = 0;
-disturbance_Ro_enable = 0;
+disturbance_Ro_enable = 1;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -93,7 +93,7 @@ disturbance_Ro_enable = 0;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck_boost_non_inverting(R, Ro, Co, L);
+circuit = buck_boost(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
@@ -101,7 +101,7 @@ test_voltages = circuit.single_voltage;
 
 % test_voltages = [190];
 
-simulation_duration = 0.5;
+simulation_duration = 0.35;
 
 
 %% Prepare Data
@@ -207,10 +207,10 @@ try
 
         % Store only samples of the data, this will be made in order to save
         % memory use
-        sim_out(i).IL = downsample(logsout.get('IL').Values, plot_compression_rate);
-        sim_out(i).Vout = downsample(logsout.get('Vout').Values, plot_compression_rate);
-        sim_out(i).xe = downsample(logsout.get('xe').Values, plot_compression_rate);
-        sim_out(i).Vref = downsample(logsout.get('Vref').Values, plot_compression_rate);
+        sim_out(i).IL = downsample_timeseries(logsout.get('IL').Values, plot_compression_rate);
+        sim_out(i).Vout = downsample_timeseries(logsout.get('Vout').Values, plot_compression_rate);
+        sim_out(i).xe = downsample_timeseries(logsout.get('xe').Values, plot_compression_rate);
+        sim_out(i).Vref = downsample_timeseries(logsout.get('Vref').Values, plot_compression_rate);
     end
 catch exception
     close(bar);

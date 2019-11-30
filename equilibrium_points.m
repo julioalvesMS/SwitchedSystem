@@ -2,7 +2,7 @@
 clear; clc; close all;
 
 % folders to create
-image_folder = 'images';
+image_folder = 'images/Equilibrium';
 cache_folder = 'tmp/cache';
 
 [~,~]=mkdir(image_folder);
@@ -29,7 +29,7 @@ run system_specifications
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = boost(R, Ro, Co, L);
+circuit = buck_boost(R, Ro, Co, L);
 
 %% Prepare Data
 

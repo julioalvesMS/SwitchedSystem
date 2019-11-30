@@ -22,6 +22,8 @@ function plot_current_time(sim_out, name, folder)
     configuration.ylabel = 'I [A]';
     configuration.xlabel = 't [ms]';
     
+    configuration.file_name = remove_special_characters(strcat(name, ' - Corrente x Tempo'));
+    
     plot_figure(data, configuration);
 end
 

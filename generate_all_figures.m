@@ -11,12 +11,12 @@ root_image_folder = strcat(root_image_folder, '/');
 cache_folder = strcat(cache_folder, '/');
 
 addpath(genpath('functions'))
-addpath(genpath('simulations'))
+addpath(genpath('simulations'))  
 addpath(genpath('system_models'))
 addpath(genpath('scripts'))
 
 
-plot_compression_rate = 1e3;
+plot_compression_rate = 5e1;
 
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);

@@ -72,20 +72,55 @@ saveas(gcf, strcat(image_folder, 'equilibrium'), 'eps')
 % plot_voltage_lambda_equilibrium(equilibrium, sample_lambdas, circuit.name, image_folder);
 
 %%
-X = equilibrium(:,1);
-Y = equilibrium(:,2);
+X = equilibrium(:,2);
+Y = equilibrium(:,1);
 
 X0 = min(X);
-XF = max(X);
+[XF, iXF] = max(X);
+YXF = Y(iXF);
+
+Xstep = (XF - X0)/1e3;
+Icy = find(Y < YXF);
+
+Yc = Y(Icy);
+Xc = X(Icy);
+
+Ig = [];
+Wg = [];
+for x = X0:Xstep:(XF-Xstep)
+    I = find(Xc > x & Xc < (x+Xstep));
+    [~,iY] = min(Yc(I));
+    
+    Ig(end+1) = I(iY);
+    Wg(end+1) = length(I);
+end
+
+Xmin = Xc(Ig);
+Ymin = Yc(Ig);
+
+figure
+hold on
+plot(X, Y, 'd')
+plot(Xmin, Ymin, 'd')
+hold off
+
+cftool(Xmin, Ymin, [], Wg)
+
+%%
 
 XP = X0:(XF-X0)/1e4:XF;
 
-XR = X0:(XF-X0)/1e2:XF;
+f=fit(Xmin,Ymin,'poly8', 'Normalize', 'on', 'Weight', Wg);
 
-f=fit(X,Y,'poly6')
+figure
+hold on
+plot(equilibrium(:,2), equilibrium(:,1), 'd')
+plot(XP, f(XP), '--r')
+hold off
+
 
 figure
 hold on
 plot(equilibrium(:,1), equilibrium(:,2), 'd')
-plot(XP, f(XP), '--r')
+plot(f(XP), XP, '--r')
 hold off
