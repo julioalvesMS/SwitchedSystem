@@ -16,7 +16,7 @@ addpath(genpath('system_models'))
 addpath(genpath('scripts'))
 
 
-plot_compression_rate = 5e1;
+plot_compression_rate = 2e2;
 
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
