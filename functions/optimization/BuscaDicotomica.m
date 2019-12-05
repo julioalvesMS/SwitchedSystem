@@ -1,14 +1,9 @@
-function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, d, xi)
+function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, precisao)
 %BuscaDicotomica Summary of this function goes here
 %   Detailed explanation goes here
 
-    l = (superior-inferior)/1e20;
+    l = (superior-inferior)/precisao;
     %l = 1e-10;
-    
-    multidimensional = 0;
-    if nargin >= 4
-        multidimensional = 1;
-    end
     
     E = l/2 - l/1000;
     condicao_parada = 0;
@@ -19,13 +14,8 @@ function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, d, xi)
         x = (inferior+superior)/2;
         
         traceback.k(k+1) = k;
-        if multidimensional==1
-            traceback.x(k+1,:) = (x*d+xi)';
-            traceback.y(k+1) = fnc(x*d+xi);
-        else
-            traceback.x(k+1) = x;
-            traceback.y(k+1) = fnc(x);
-        end
+        traceback.x(k+1) = x;
+        traceback.y(k+1) = fnc(x);
         
         
         if superior - inferior <= l
@@ -38,13 +28,8 @@ function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, d, xi)
         lambda = meio - E;
         mi = meio + E;
         
-        if multidimensional == 1
-            fl = fnc(lambda*d + xi);
-            fm = fnc(mi*d + xi);
-        else
-            fl = fnc(lambda);
-            fm = fnc(mi);
-        end
+        fl = fnc(lambda);
+        fm = fnc(mi);
         
         if fl < fm
             superior = mi;
@@ -60,11 +45,7 @@ function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, d, xi)
     
     x = (inferior+superior)/2;
     
-    if multidimensional == 1
-        y = fnc(x*d + xi);
-    else
-        y = fnc(x);
-    end
+	y = fnc(x);
     
     data.traceback = traceback;
     data.stop_condition = condicao_parada;

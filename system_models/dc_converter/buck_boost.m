@@ -15,7 +15,7 @@ classdef buck_boost
         pwm_pid_ki = 0.2;
         pwm_pid_kd = 0.0;
         
-        reference_pid_kp = 3;
+        reference_pid_kp = 1;
         reference_pid_ki = 15.3;
     end
     

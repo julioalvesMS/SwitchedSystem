@@ -40,7 +40,7 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = 0;
+opt_discrete = 1;
 
 
 % Desired Theorem to use
