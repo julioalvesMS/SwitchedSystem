@@ -47,7 +47,7 @@ opt_discrete = 0;
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 2;
+opt_theorem = 1;
 
 
 % Use PWM Controled mode or default switched control
@@ -68,7 +68,7 @@ opt_update_equilibrium = 1;
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = 0;
+opt_equilibrium_controller = 1;
 
 
 opt_partial_information = 0;
@@ -85,7 +85,7 @@ opt_constant_reference = 1;
 %   disturbance_Vin_enable - Enable step disturbance in the input voltage
 %   disturbance_Ro_enable - Enable step disturbance in the load resistance
 disturbance_Vin_enable = 0;
-disturbance_Ro_enable = 1;
+disturbance_Ro_enable = 0;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -93,7 +93,7 @@ disturbance_Ro_enable = 1;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck_boost(R, Ro, Co, L);
+circuit = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
@@ -101,7 +101,7 @@ test_voltages = circuit.single_voltage;
 
 % test_voltages = [190];
 
-simulation_duration = 0.35;
+simulation_duration = 1;
 
 
 %% Prepare Data
@@ -168,6 +168,8 @@ bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
 try
     load_system(model);
+    
+    run comment_simulink
 
     for i=Ns:-1:1
 
@@ -212,6 +214,9 @@ try
         sim_out(i).xe = downsample_timeseries(logsout.get('xe').Values, plot_compression_rate);
         sim_out(i).Vref = downsample_timeseries(logsout.get('Vref').Values, plot_compression_rate);
     end
+    
+    uncomment_blocks(model)
+    
 catch exception
     close(bar);
     rethrow(exception);

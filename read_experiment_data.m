@@ -41,7 +41,7 @@ end
 
 %% Process useful data
 
-ratio = 5;
+ratio = 1;
 
 C2R_BuckBoost = {};
 C2R_BuckBoost.t = C1BuckBoost_C2_Step_30V_Vo00000(round(9*end/20):ratio:end,1);
@@ -81,6 +81,38 @@ PWM_Buck.Vref = C3Buck_PWM_Step_30V_Vref00000(round(9*end/20):ratio:end,2);
 PWM_Buck.IL = C2Buck_PWM_Step_30V_IL00000(round(9*end/20):ratio:end,2);
 
 %% Remove noise
+
+PWM_Buck.Vof = smooth(PWM_Buck.t,PWM_Buck.Vo,10,'rloess');
+PWM_Boost.Vof = smooth(PWM_Boost.t,PWM_Boost.Vo,10,'rloess');
+PWM_BuckBoost.Vof = smooth(PWM_BuckBoost.t,PWM_BuckBoost.Vo,10,'rloess');
+C2R_Buck.Vof = smooth(C2R_Buck.t,C2R_Buck.Vo,10,'rloess');
+C2R_Boost.Vof = smooth(C2R_Boost.t,C2R_Boost.Vo,10,'rloess');
+C2R_BuckBoost.Vof = smooth(C2R_BuckBoost.t,C2R_BuckBoost.Vo,10,'rloess');
+
+%%
+
+% close all
+% figure
+% hold on
+% plot(C2R_BuckBoost.Vo)
+% plot(smooth(C2R_BuckBoost.t,C2R_BuckBoost.Vo,10,'lowess'))
+% hold off
+% title('lowess')
+% 
+% figure
+% hold on
+% plot(C2R_BuckBoost.Vo)
+% plot(smooth(C2R_BuckBoost.t,C2R_BuckBoost.Vo,10,'sgolay'))
+% hold off
+% title('sgolay')
+% 
+% figure
+% hold on
+% plot(PWM_Boost.Vo)
+% plot(smooth(PWM_Boost.t,PWM_Boost.Vo,10,'rloess'))
+% hold off
+% title('rloess')
+
 
 %% Plot
 
@@ -142,10 +174,15 @@ set(gcf,'renderer','Painters')
 saveas(gcf, strcat(root_image_folder, 'Experiment_C2R_BuckBoost_IL'), 'epsc');
 
 function plot_experiment_voltage(data, ref)
+    ratio = 5;
+
+    y = data.Vof(1:ratio:end);
+    x = 1e3*data.t(1:ratio:end);
+    r = ref*ones(size(y));
     figure
     hold on
-    plot(data.t*1e3, data.Vo)
-    plot(data.t*1e3, ref*ones(size(data.Vo)), '--black')
+    plot(x, y)
+    plot(x, r, '--black')
     
     ylabel('V_o [V]')
     xlabel('t [ms]')
@@ -155,9 +192,13 @@ function plot_experiment_voltage(data, ref)
 end
 
 function plot_experiment_current(data)
+    ratio = 5;
+
+    y = data.IL(1:ratio:end);
+    x = 1e3*data.t(1:ratio:end);
     figure
     hold on
-    plot(data.t*1e3, data.IL)
+    plot(x, y)
     
     ylabel('I_L [A]')
     xlabel('t [ms]')

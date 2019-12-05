@@ -43,6 +43,8 @@ clear sim_out
 
 try
     load_system(model);
+    
+    run comment_simulink
 
     for i=Ns:-1:1
 
@@ -87,6 +89,9 @@ try
         sim_out(i).xe = downsample_timeseries(logsout.get('xe').Values, plot_compression_rate);
         sim_out(i).Vref = downsample_timeseries(logsout.get('Vref').Values, plot_compression_rate);
     end
+    
+    uncomment_blocks(model)
+    
 catch exception
     close(bar);
     rethrow(exception);

@@ -9,7 +9,7 @@ function [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambda)
     [Alc, Blc] = calc_sys_lambda(sys, lambda);
     ye = -Alc\Blc*sys.U;
     
-    [Al, Bl, Ql] = calc_sys_lambda(dsys, lambda);
+    [Al, Bl] = calc_sys_lambda(dsys, lambda);
     xe = -(Al-I)\Bl*dsys.U;
     
     for i=1:dsys.N
