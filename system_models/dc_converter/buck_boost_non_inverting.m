@@ -20,6 +20,8 @@ classdef buck_boost_non_inverting
         
         reference_pid_kp = 5e-1;
         reference_pid_ki = 100e-1;
+        
+        current_correction_gain = 2;
     end
     
     properties
@@ -92,6 +94,10 @@ classdef buck_boost_non_inverting
             
             upper = Vin/2 * sqrt(self.Ro/self.R) - error;
             lower = 0;
+        end
+        
+        function vi = get_reference_initial(self, Vs)
+            vi = 0;
         end
     end
 end

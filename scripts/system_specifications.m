@@ -5,6 +5,8 @@ Ti=1e-6; % [s] - Simulation pace
 pwm_period = 5e-5; % [s] PWM period
 pwm_sample_time = 1e-6;
 
+current_correction_start = 0.2;
+
 sensor_sample = 3e-5;
 
 % Circuit specifications
@@ -39,5 +41,3 @@ Vo = 45;
 ts = 0.2;
 
 Tref = 1e-3;
-
-rederence_pid_initial_condition = 65

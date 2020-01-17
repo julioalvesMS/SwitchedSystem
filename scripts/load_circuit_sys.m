@@ -19,3 +19,5 @@ dsys = discrete_gss(sys,Ts);
 [pwm_limit_lower, pwm_limit_upper] = circuit.get_pwm_control_limits();
 
 fnc_converter_Ie = circuit.get_converter_Ie_fnc();
+
+reference_controller_initial = circuit.get_reference_initial(Vs);

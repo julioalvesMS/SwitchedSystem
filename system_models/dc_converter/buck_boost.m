@@ -6,6 +6,7 @@ classdef buck_boost
         
         simulink = 'ideal_buck_boost.slx'
         discrete_simulink = 'discrete_buck_boost.slx'
+        limit_cycle_simulink = 'limit_cycle_buck_boost.slx'
         
         test_voltages = 10:20:170;
         
@@ -17,6 +18,8 @@ classdef buck_boost
         
         reference_pid_kp = 1;
         reference_pid_ki = 15.3;
+        
+        current_correction_gain = 2;
     end
     
     properties
@@ -84,6 +87,10 @@ classdef buck_boost
             
             upper = -Vin/2 * ( 1 - sqrt(1 + self.Ro/self.R)) - error;
             lower = -Vin/2 * ( 1 + sqrt(1 + self.Ro/self.R)) + error;
+        end
+        
+        function vi = get_reference_initial(self, Vs)
+            vi = 0;
         end
     end
 end

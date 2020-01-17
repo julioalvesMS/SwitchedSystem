@@ -21,8 +21,6 @@ plot_compression_rate = 1e0;
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
-
-s = tf('s')
 %% System Specifications
 
 run system_specifications
@@ -40,52 +38,53 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = 1;
+opt_discrete = false;
 
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 1;
+opt_theorem = 2;
 
 
 % Use PWM Controled mode or default switched control
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = 0;
+opt_pwm = false;
 
 
 % Update the equilibrium point from the system
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = 1;
+opt_update_equilibrium = true;
 
 
 % Use a PI to determine and update the equilibrium point
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = 1;
+opt_equilibrium_controller = false;
 
+opt_current_correction = true;
 
-opt_partial_information = 0;
+opt_partial_information = false;
 
 % Choose between a constant output voltage or one with a different profile
 % Options
 %   0 - Update reference according to the profile in the simulink
 %   1 - Use constante reference
-opt_constant_reference = 1;
+opt_constant_reference = true;
 
 
 % Disturbances to be applied during simulations
 % Options
 %   disturbance_Vin_enable - Enable step disturbance in the input voltage
 %   disturbance_Ro_enable - Enable step disturbance in the load resistance
-disturbance_Vin_enable = 0;
-disturbance_Ro_enable = 0;
+disturbance_Vin_enable = false;
+disturbance_Ro_enable = false;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -105,6 +104,8 @@ simulation_duration = 1;
 
 
 %% Prepare Data
+
+current_correction_gain =  circuit.current_correction_gain;
 
 pwm_pid_kp = circuit.pwm_pid_kp;
 pwm_pid_ki = circuit.pwm_pid_ki;

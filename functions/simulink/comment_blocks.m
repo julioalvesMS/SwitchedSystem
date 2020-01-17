@@ -35,10 +35,10 @@ function comment_block(simulink_name, blocks, block_name, active)
     index = find(~cellfun(@isempty,matches));
 
     if isempty(index)
-        ME = MException('CommentException:noMatch', ...
-            strcat('Não foi possível encontrar o bloco ''', ...
-            block_name, ''' na simulação ''', simulink_name, '''.'));
-        throw(ME)
+        message = strcat('Não foi possível encontrar o bloco ''', ...
+            block_name, ''' na simulação ''', simulink_name, '''.');
+        warning(message)
+        return
     end
     if length(index)~=1
         message = strcat('Mais de um bloco com o nome ''', ...

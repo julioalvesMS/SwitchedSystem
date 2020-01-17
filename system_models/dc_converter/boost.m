@@ -6,6 +6,7 @@ classdef boost
         
         simulink = 'ideal_boost.slx'
         discrete_simulink = 'discrete_boost.slx'
+        limit_cycle_simulink = 'limit_cycle_boost.slx'
         
         test_voltages = 80:20:200;
         
@@ -17,6 +18,8 @@ classdef boost
         
         reference_pid_kp = 1;
         reference_pid_ki = 15.3;
+        
+        current_correction_gain = 2;
         
         % Gi = ((Ve/L)*s + (1-d)*Ie/(L*Co))/(s^2 - R*s/L + (1-d)^2/L*Co);
     end
@@ -86,6 +89,10 @@ classdef boost
             
             upper = Vin/2 * sqrt(self.Ro/self.R) - error;
             lower = -Vin/2 * sqrt(self.Ro/self.R) + error;
+        end
+        
+        function vi = get_reference_initial(self, Vs)
+            vi = Vs*self.Ro/(self.R+self.Ro);
         end
     end
 end

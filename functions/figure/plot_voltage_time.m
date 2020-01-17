@@ -19,10 +19,12 @@ function plot_voltage_time(sim_out, name, folder)
     for i=length(sim_out):-1:1
         data(i).x1 = sim_out(i).Vout.Time*1e3;
         data(i).y1 = sim_out(i).Vout.Data;
-        data(i).x2 = sim_out(i).Vref.Time*1e3;
-        data(i).y2 = sim_out(i).Vref.Data;
         tmp_legends{2*i-1} = 'Vo';
-        tmp_legends{2*i} = 'Vref';
+        if isfield(sim_out(i), 'Vref')
+            data(i).x2 = sim_out(i).Vref.Time*1e3;
+            data(i).y2 = sim_out(i).Vref.Data;
+            tmp_legends{2*i} = 'Vref';
+        end
     end
     
 %     configuration.legend = tmp_legends;

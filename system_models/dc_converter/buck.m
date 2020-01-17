@@ -6,6 +6,7 @@ classdef buck
         
         simulink = 'ideal_buck.slx'
         discrete_simulink = 'discrete_buck.slx'
+        limit_cycle_simulink = 'limit_cycle_buck.slx'
         
         test_voltages = 5:5:50;
         
@@ -27,6 +28,8 @@ classdef buck
         
         reference_pid_kp = 1;
         reference_pid_ki = 100;
+        
+        current_correction_gain = 2;
     end
     
     properties
@@ -83,9 +86,12 @@ classdef buck
         end
         
         function [lower, upper] = get_reference_ve_limits(self, Vin)
-            
             upper = Vin;
             lower = 0;
+        end
+        
+        function vi = get_reference_initial(self, Vs)
+            vi = 0;
         end
     end
 end

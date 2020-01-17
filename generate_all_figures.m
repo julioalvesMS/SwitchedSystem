@@ -183,6 +183,37 @@ new_sim.simulation_duration = 0.7;
 config_simulations{end+1} = new_sim;
 
 
+%% Run Discrete
+
+image_folder = strcat(root_image_folder, '/Discrete_1');
+[~,~]=mkdir(image_folder);
+image_folder = strcat(image_folder, '/');
+
+discrete_config = default_config;
+discrete_config.discrete = 1;
+discrete_config.opt_theorem = 1;
+discrete_config.image_folder = image_folder;
+discrete_config.simulation_duration = 0.1;
+
+% Buck
+new_sim = discrete_config;
+new_sim.circuit = circuit_buck;
+new_sim.test_voltages = new_sim.circuit.test_voltages;
+config_simulations{end+1} = new_sim;
+
+% Boost
+new_sim = discrete_config;
+new_sim.circuit = circuit_boost;
+new_sim.test_voltages = new_sim.circuit.test_voltages;
+config_simulations{end+1} = new_sim;
+
+% Buck-Boost
+new_sim = discrete_config;
+new_sim.circuit = circuit_buck_boost;
+new_sim.test_voltages = new_sim.circuit.test_voltages;
+config_simulations{end+1} = new_sim;
+
+
 %% Run PWM - Load Change
 
 image_folder = strcat(root_image_folder, '/PWM/Load_Change');
