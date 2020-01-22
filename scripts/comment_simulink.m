@@ -1,6 +1,9 @@
 comment_blocks(model, 'PWM Control', opt_pwm)
 comment_blocks(model, 'Switched Control', ~opt_pwm)
 
+comment_blocks(model, 'Classic Voltage Current Controller', opt_pwm_current_controller)
+comment_blocks(model, 'Classic Voltage Controller', ~opt_pwm_current_controller)
+
 comment_blocks(model, 'Reference Update', opt_update_equilibrium)
 
 comment_blocks(model, 'Equilibrium Control', opt_equilibrium_controller)

@@ -34,7 +34,7 @@ x0 = [0; 0];
 Tsw = -1; % [s] - Modern controller maximum switching period
 Fsw = 1/Tsw; % [Hz] - Modern controller maximum switching frequency
 
-Ts = 5e-5;
+Ts = 2.5e-5;
 
 % Parameters for dynamic reference
 Vo = 45;

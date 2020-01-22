@@ -137,7 +137,7 @@ function [s] = sigma_hinf(A,ell,xe,P,E,H,G,rho,n,x)
     k =mod(n-2,kappa)+1;
     km=mod(n-1,kappa)+1;
     for i=1:length(A)
-        Lcal = [A{i}'*P{km}*A{i}-P{k}      A{i}'*P{km}*ell{i,k};
+        Lcal = [A{i}'*P{km}*A{i}-P{k}      A{i}'*P{km}*ell{i,k}; nm
                 ell{i,k}'*P{km}*A{i}        ell{i,k}'*P{km}*ell{i,k}];
         Dcal = [A{i}'*P{km}*H{i}+E{i}'*G{i};
                 ell{i,k}'*P{km}*H{i}];

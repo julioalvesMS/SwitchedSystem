@@ -14,6 +14,9 @@ sys = circuit.get_sys();
 sys.U = Vs;
 sys.x0 = x0;
 
+for i=1:sys.N
+end
+
 dsys = discrete_gss(sys,Ts);
 
 [pwm_limit_lower, pwm_limit_upper] = circuit.get_pwm_control_limits();

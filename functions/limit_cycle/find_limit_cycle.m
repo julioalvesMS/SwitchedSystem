@@ -1,10 +1,14 @@
 function [cycle] = find_limit_cycle(sys, kappa, cand, opt)
 
     A = sys.A;
+    E = sys.E;
+    H = sys.H;
+    G = sys.G;
     b = sys.b;
     x0 = sys.x0;
     Q = sys.Q{1};
     N = length(sys.A);
+    nw = size(sys.H{1},2);
     
     valopt= zeros(1,length(cand));
     out = cell(1,length(cand));
@@ -60,6 +64,7 @@ function [cycle] = find_limit_cycle(sys, kappa, cand, opt)
     cycle = cand{idx};
     cycle.lyap = out;
     cycle.ell = ell;
+    cycle.kappa = kappa;
     
 end
 

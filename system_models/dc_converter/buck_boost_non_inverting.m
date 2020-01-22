@@ -6,14 +6,21 @@ classdef buck_boost_non_inverting
         
         simulink = 'ideal_buck_boost_non_inverter.slx'
         discrete_simulink = 'discrete_buck_boost_non_inverter.slx'
+        limit_cycle_simulink = 'limit_cycle_buck_boost_non_inverter.slx'
         
         test_voltages = 10:20:170;
         
         single_voltage = 120;
+        limit_cycle_voltage = 80;
+        limit_cycle_gamma = [0 1];
         
         pwm_pid_kp = 0.5;
         pwm_pid_ki = 0.1;
-        pwm_pid_kd = 0;
+        
+        pwm_pid_vc_vp = 0.316;
+        pwm_pid_vc_vi = 3.23;
+        pwm_pid_vc_cp = 0.0203;
+        pwm_pid_vc_ci = 4.77;
 
 %         pwm_pid_kp = 5e-2;
 %         pwm_pid_ki = 100e-2;
@@ -67,13 +74,28 @@ classdef buck_boost_non_inverting
             D{3} = D{1};
 
             Q{1} = [
-                1e-2   0
+                1   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};
             Q{3} = Q{1};
 
-            sys = gss(A, B, C, D, Q);
+            E{1} = [
+                1   0
+                0   1/self.Ro
+            ];
+            E{2} = E{1};
+            E{3} = E{1};
+
+            G{1} = [0;0];
+            G{2} = G{1};
+            G{3} = G{1};
+
+            H{1} = [0;0];
+            H{2} = H{1};
+            H{3} = H{1};
+
+            sys = gss(A, B, C, D, Q, E, G, H);
         end
         
         function [lower, upper] = get_pwm_control_limits(self)

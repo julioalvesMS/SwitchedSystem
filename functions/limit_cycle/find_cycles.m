@@ -2,7 +2,7 @@ function [C, kappa] = find_cycles(sys, xe, Gamma, K)
     C = {};
     
     if(~exist('K','var')|| isempty(K))
-        K = 1:15;
+        K = 1:13;
     end
     
     for kappa=K
@@ -16,7 +16,7 @@ end
 function C = find_cycles_kappa(sys, xe, Gamma, kappa)
     
     GAMMA = {Gamma};
-    GX_ast = {(GAMMA{1}*xe)'};
+    GX_ast = {(Gamma*xe)'};
 
     A = sys.A;
     b = sys.b;

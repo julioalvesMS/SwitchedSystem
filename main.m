@@ -38,7 +38,7 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = false;
+opt_discrete = true;
 
 
 % Desired Theorem to use
@@ -55,6 +55,13 @@ opt_theorem = 2;
 opt_pwm = false;
 
 
+% Use Current Control or only Voltage Control for PWM
+% Options
+%   0 - Use only voltage control
+%   1 - Use voltage and current control
+opt_pwm_current_controller = false;
+
+
 % Update the equilibrium point from the system
 % Options
 %   0 - Use given equilibrium
@@ -68,7 +75,7 @@ opt_update_equilibrium = true;
 %   1 - Update the voltage from the equilibrium point using a PI controller
 opt_equilibrium_controller = false;
 
-opt_current_correction = true;
+opt_current_correction = false;
 
 opt_partial_information = false;
 
@@ -92,11 +99,12 @@ disturbance_Ro_enable = false;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck_boost_non_inverting(R, Ro, Co, L);
+circuit = boost(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 test_voltages = circuit.single_voltage;
+test_voltages = 120;
 
 % test_voltages = [190];
 
@@ -109,7 +117,11 @@ current_correction_gain =  circuit.current_correction_gain;
 
 pwm_pid_kp = circuit.pwm_pid_kp;
 pwm_pid_ki = circuit.pwm_pid_ki;
-pwm_pid_kd = circuit.pwm_pid_kd;
+        
+pwm_pid_vc_vp = circuit.pwm_pid_vc_vp;
+pwm_pid_vc_vi = circuit.pwm_pid_vc_vi;
+pwm_pid_vc_cp = circuit.pwm_pid_vc_cp;
+pwm_pid_vc_ci = circuit.pwm_pid_vc_ci;
 
 reference_pid_kp = circuit.reference_pid_kp;
 reference_pid_ki = circuit.reference_pid_ki;

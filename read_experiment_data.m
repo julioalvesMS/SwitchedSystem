@@ -28,24 +28,24 @@ root_data_folder = 'data';
 
 folder = "CURVAS_2019_11_29";
 
-folder_path = fullfile(root_data_folder, folder);
+folder_path = fullfile(root_data_folder, folder, '*.dat');
 
 data_files = dir(folder_path);
 N = length(data_files);
-
-for i = 3:N
+ 
+for i = 1:N
     file = data_files(i);
     load(file.name);
 end
 
-folder = "CURVAS_2020_01_14";
+folder = "CURVAS_2020_01_22";
 
-folder_path = fullfile(root_data_folder, folder);
+folder_path = fullfile(root_data_folder, folder, '*.dat');
 
 data_files = dir(folder_path);
 N = length(data_files);
 
-for i = 3:N
+for i = 1:N
     file = data_files(i);
     load(file.name);
 end

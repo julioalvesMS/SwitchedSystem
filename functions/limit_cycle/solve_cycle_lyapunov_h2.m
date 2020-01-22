@@ -37,7 +37,6 @@ function [out] = solve_cycle_lyapunov_h2(A,mask,E,H,G,L,mo)
 
         lmiterm([-clmi,2,2,P{1}],1,1);
         lmiterm([-clmi,3,3,0],1);
-
     end
 
 

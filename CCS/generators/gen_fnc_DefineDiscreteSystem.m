@@ -22,10 +22,27 @@ for i=1:dsys.N
     "        subSys->A[1][0] = " + sprintf('%g;',dsys.A{i}(2,1));
     "        subSys->A[1][1] = " + sprintf('%g;',dsys.A{i}(2,2));
     "        //"
-    "        // Subsystem "+id+" -- Matrix B"
+    "        // Subsystem "+id+" -- Matrix L"
     "        //"
     "        subSys->L[0] = " + sprintf('%g;',dsys.L{i}(1));
     "        subSys->L[1] = " + sprintf('%g;',dsys.L{i}(2));
+    "        //"
+    "        // Subsystem "+id+" -- Matrix Q"
+    "        //"
+    "        subSys->E[0][0] = " + sprintf('%g;',dsys.E{i}(1,1));
+    "        subSys->E[0][1] = " + sprintf('%g;',dsys.E{i}(1,2));
+    "        subSys->E[1][0] = " + sprintf('%g;',dsys.E{i}(2,1));
+    "        subSys->E[1][1] = " + sprintf('%g;',dsys.E{i}(2,2));
+    "        //"
+    "        // Subsystem "+id+" -- Matrix H"
+    "        //"
+    "        subSys->H[0] = " + sprintf('%g;',dsys.H{i}(1));
+    "        subSys->H[1] = " + sprintf('%g;',dsys.H{i}(2));
+    "        //"
+    "        // Subsystem "+id+" -- Matrix G"
+    "        //"
+    "        subSys->G[0] = " + sprintf('%g;',dsys.G{i}(1));
+    "        subSys->G[1] = " + sprintf('%g;',dsys.G{i}(2));
     "        //"
     "        // Subsystem "+id+" -- Matrix Q"
     "        //"
