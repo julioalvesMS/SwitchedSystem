@@ -15,16 +15,16 @@ sensor_sample = 3e-5;
 % Ro = 7.5; % [Ohm] - Load Resistance
 % Co = 726e-6; % [F] - Output Capacitance
 % Rc = 0.00015; % [Ohm] - Capcitor Resistance
-R  = 0.4; % [Ohm] - Converter Resistance
-L  = 1.954e-3; % [H] - Converter Indutance
 Ro = 96.8; % [Ohm] - Load Resistance
 Co = 2250e-6; % [F] - Output Capacitance
-Rc = 0.00015; % [Ohm] - Capcitor Resistance
+Rc = 0.04;
+R  = 0.49; % [Ohm] - Converter Resistance
+L  = 1.981e-3; % [H] - Converter Indutance
 
 tau = Ro*Co;
 
 % Input voltage
-Vs = 65; % [V]
+Vs = 66; % [V]
 
 % System starts discharged
 x0 = [0; 0];

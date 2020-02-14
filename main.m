@@ -21,9 +21,17 @@ plot_compression_rate = 1e0;
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
+
+load('data/CURVAS_02_04_compare.mat')
+load('data/TESTE_02_13.mat')
+
 %% System Specifications
 
 run system_specifications
+s = tf('s')
+F = 1/(tau*s+1);
+Fd = c2d(F, 1e-3, 'tustin');
+[NFd, DFd] =  tfdata(Fd)
 
 %% Simulation Parametersr
 
@@ -38,7 +46,7 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = true;
+opt_discrete = false;
 
 
 % Desired Theorem to use
@@ -99,16 +107,15 @@ disturbance_Ro_enable = false;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = boost(R, Ro, Co, L);
+circuit = buck(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
 test_voltages = circuit.single_voltage;
-test_voltages = 120;
 
 % test_voltages = [190];
 
-simulation_duration = 1;
+simulation_duration = 0.1;
 
 
 %% Prepare Data
@@ -258,3 +265,15 @@ end
 % F = Fa(1:round(end/2));
 % f = 0:1/simulation_duration:1/(2*Ti);
 % plot(f,F);
+
+%%
+close all
+
+EXP_CONV = Buck_PWM;
+plot_voltage_time(sim_out, circuit.name, image_folder);
+hold on
+plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.Vof - 0.38)
+
+plot_current_time(sim_out, circuit.name, image_folder);
+hold on
+plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.IL + 0.3667)

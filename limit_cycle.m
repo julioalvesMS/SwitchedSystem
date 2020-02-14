@@ -1,7 +1,7 @@
 %% Initial Setup
 clear; clc; close all;
 
-load('data/LC_01_22_grace.mat')
+load('data/CURVAS_02_04_compare.mat')
 
 % folders to create
 image_folder = 'images';
@@ -69,6 +69,7 @@ Hd = zeros(2,1,dsys.N);
 Gd = zeros(2,1,dsys.N);
 for i=length(dsys.N)
     Ed(:,:,i) = dsys.E{i};
+%     Ed(:,:,i) = sqrt(dsys.Q{i});
     Gd(:,:,i) = dsys.G{i};
     Hd(:,:,i) = dsys.H{i};
 end
@@ -140,14 +141,17 @@ if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 %%
+keyboard;
 
-EXP_CONV = CO_Buck;
+close all;
 
 
-figure
+EXP_CONV = Buck_CL_H2_T;
+plot_voltage_time(sim_out, circuit.name, image_folder);
 hold on
-plot(EXP_CONV.t, EXP_CONV.TS)
-plot(EXP_CONV.t, EXP_CONV.SW)
+plot(EXP_CONV.t*1e3, EXP_CONV.Vof)
+
+
 
 %%
 
@@ -201,11 +205,11 @@ for i=2:(K+1)
 end
 
 if(opt_minimization<2)   
-        cost = trace(ze*ze');
+    cost = trace(ze*ze');
 elseif(opt_minimization<3)   
-        cost = trace(ze*ze'+G{m}'*G{m});
+    cost = trace(ze*ze'+G{m}'*G{m});
 else
-        cost = trace(ze*ze')/trace(w*w')
+    cost = trace(ze*ze')/trace(w*w')
 end
 
 
@@ -221,6 +225,16 @@ xlabel('$x_1[n]$','interpreter','latex','FontSize',12)
 ylabel('$x_2[n]$','interpreter','latex','FontName','Times-Roman','FontSize',12)
 %set(gca,'FontSize',15)
 
+
+
+plot_voltage_current(sim_out, circuit.name, image_folder);
+hold on
+plot(x(1,:),x(2,:),'LineWidth',.2,'Marker','.','MarkerSize',10)
+for i=1:kappa
+    scatter(xe_h{i}(1),xe_h{i}(2),'LineWidth',7,'Marker','*')
+end
+
+keyboard
 
 k= 0:(length(s)-1);
 f=figure;

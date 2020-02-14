@@ -61,7 +61,7 @@ try
         config = config_converters{conv_id};
         circuit = config.circuit;
 
-        waitbar((i-1)/Ns, bar, sprintf('Converter %d of %d\n%s',i, Ns, circuit.name));
+        waitbar((conv_id-1)/Ns, bar, sprintf('Converter %d of %d\n%s',conv_id, Ns, circuit.name));
 
         run load_circuit_sys
 
@@ -90,6 +90,16 @@ try
         cycle_cost = find_limit_cycle(dsys, kappa, cand, 1);
         cycle_H2 = find_limit_cycle(dsys, kappa, cand, 2);
         cycle_Hinf = find_limit_cycle(dsys, kappa, cand, 3);
+        
+        
+        A = [-R/L  -1/L
+              1/Co  -1/(Ro*Co)
+        ];
+        B = [Vs/L; 0];
+        C = [1.8 1];
+        D = 0;
+        sys_ss = ss(A, B, C, D);
+        [K,M] = project_state_feedback_h2(sys_ss, pwm_period);
 
 
         getP.fnc = gen_fnc_getP(circuit.class_name, Pc1, Pc2, Pd1);
@@ -98,6 +108,7 @@ try
         DefineDiscreteSystem.fnc = gen_fnc_DefineDiscreteSystem(dsys);
         getClassicVoltageController.fnc = gen_fnc_getClassicVoltageController(circuit, pwm_period);
         getClassicVoltageCurrentController.fnc = gen_fnc_getClassicVoltageCurrentController(circuit, pwm_period);
+        getStateFeedbackH2Controller.fnc = gen_fnc_getStateFeedbackH2Controller(circuit, K, C, M);
         getReferenceController.fnc = gen_fnc_getReferenceController(circuit, Tref);
         DefineLimitCycleCost.fnc = gen_fnc_DefineLimitCycleCost(dsys, cycle_cost);
         DefineLimitCycleH2.fnc = gen_fnc_DefineLimitCycleH2(dsys, cycle_H2);
@@ -109,6 +120,7 @@ try
         DefineDiscreteSystem.tag = 'DefineDiscreteSystem';
         getClassicVoltageController.tag = 'getClassicVoltageController';
         getClassicVoltageCurrentController.tag = 'getClassicVoltageCurrentController';
+        getStateFeedbackH2Controller.tag = 'getStateFeedbackH2Controller';
         getReferenceController.tag = 'getReferenceController';
         DefineLimitCycleCost.tag = 'DefineLimitCycleCost';
         DefineLimitCycleH2.tag = 'DefineLimitCycleH2';
@@ -120,6 +132,7 @@ try
             getD
             getClassicVoltageController
             getClassicVoltageCurrentController
+            getStateFeedbackH2Controller
             getReferenceController
             DefineDiscreteSystem
             DefineLimitCycleCost

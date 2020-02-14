@@ -68,6 +68,9 @@ namespace ConverterBuck
 {{getClassicVoltageCurrentController}}
 
 
+{{getStateFeedbackH2Controller}}
+
+
 {{getReferenceController}}
 
 

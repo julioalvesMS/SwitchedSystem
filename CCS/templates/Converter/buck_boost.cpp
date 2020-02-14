@@ -68,6 +68,9 @@ namespace ConverterBuckBoost
 {{getClassicVoltageCurrentController}}
 
 
+{{getStateFeedbackH2Controller}}
+
+
 {{getReferenceController}}
 
 

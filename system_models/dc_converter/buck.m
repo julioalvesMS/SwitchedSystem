@@ -10,19 +10,17 @@ classdef buck
         
         test_voltages = 5:5:50;
         
-        single_voltage = 40;
-        limit_cycle_voltage = 40;
-        limit_cycle_gamma = [0 4];
+        single_voltage = 30;
+        limit_cycle_voltage = 30;
+        limit_cycle_gamma = [0 3];
         limit_cycle_kappa = 10;
         
-%         pwm_pid_kp = 0.123;
-%         pwm_pid_ki = 28.9;
-%         pwm_pid_kp = 0.0062;
-%         pwm_pid_ki = 0.909;
-%         pwm_pid_kp = 0.0203;
-%         pwm_pid_ki = 4.77;
-        pwm_pid_kp = 0.01;
-        pwm_pid_ki = 1;
+%         pwm_pid_kp = 0.00919;
+%         pwm_pid_ki = 3.28;
+%         pwm_pid_kp = 0.00675;
+%         pwm_pid_ki = 3.85;
+        pwm_pid_kp = 0.00676;
+        pwm_pid_ki = 3.13;
         
         pwm_pid_vc_vp = 0.316;
         pwm_pid_vc_vi = 3.23;
@@ -73,14 +71,14 @@ classdef buck
             D{2} = D{1};
 
             Q{1} = [
-                1e-2   0
+                1e-1   0
                 0   1/self.Ro
             ];
             Q{2} = Q{1};
 
             E{1} = [
-                1e-1   0
-                0   1/self.Ro
+                0   0
+                0   0.1/self.Ro
             ];
             E{2} = E{1};
 

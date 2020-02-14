@@ -12,7 +12,7 @@ classdef buck_boost
         
         single_voltage = 80;
         limit_cycle_voltage = 80;
-        limit_cycle_gamma = [0 1];
+        limit_cycle_gamma = [0 0.3];
         
         pwm_pid_kp = 0.0020;
         pwm_pid_ki = 0.2;
