@@ -28,10 +28,6 @@ load('data/TESTE_02_13.mat')
 %% System Specifications
 
 run system_specifications
-s = tf('s')
-F = 1/(tau*s+1);
-Fd = c2d(F, 1e-3, 'tustin');
-[NFd, DFd] =  tfdata(Fd)
 
 %% Simulation Parametersr
 
@@ -41,13 +37,11 @@ Fd = c2d(F, 1e-3, 'tustin');
 %   2 - Specific Circuit Model
 opt_model = 2;
 
-
 % Choose between continuous or discrete model
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
 opt_discrete = false;
-
 
 % Desired Theorem to use
 % Theorems defines
@@ -55,13 +49,11 @@ opt_discrete = false;
 %   2 - Valiable Equilibrium
 opt_theorem = 2;
 
-
 % Use PWM Controled mode or default switched control
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
 opt_pwm = false;
-
 
 % Use Current Control or only Voltage Control for PWM
 % Options
@@ -69,13 +61,11 @@ opt_pwm = false;
 %   1 - Use voltage and current control
 opt_pwm_current_controller = false;
 
-
 % Update the equilibrium point from the system
 % Options
 %   0 - Use given equilibrium
 %   1 - Update equilibrium based on given reference voltage
 opt_update_equilibrium = true;
-
 
 % Use a PI to determine and update the equilibrium point
 % Options
@@ -83,8 +73,17 @@ opt_update_equilibrium = true;
 %   1 - Update the voltage from the equilibrium point using a PI controller
 opt_equilibrium_controller = false;
 
+% Use a PI to correct the equilibrium current estimation
+% Options
+%   0 - Don't use the PI
+%   1 - Correct the current from the equilibrium point using a PI controller
 opt_current_correction = false;
 
+% Run with knowledge of only the equilibrium voltage.
+% Uses a filter to estimate the equilibrium current.
+% Options
+%   0 - Don't use the filter
+%   1 - Use the filter to estimate the equilibrium current
 opt_partial_information = false;
 
 % Choose between a constant output voltage or one with a different profile
@@ -93,7 +92,6 @@ opt_partial_information = false;
 %   1 - Use constante reference
 opt_constant_reference = true;
 
-
 % Disturbances to be applied during simulations
 % Options
 %   disturbance_Vin_enable - Enable step disturbance in the input voltage
@@ -101,13 +99,19 @@ opt_constant_reference = true;
 disturbance_Vin_enable = false;
 disturbance_Ro_enable = false;
 
+% Simulate the dead time observed in real life switches
+% Options
+%   0 - Consider ideal switches
+%   1 - Consider dead time
+opt_dead_time = true;
+
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
 %   buck
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck(R, Ro, Co, L);
+circuit = buck_boost_non_inverting(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
@@ -115,7 +119,7 @@ test_voltages = circuit.single_voltage;
 
 % test_voltages = [190];
 
-simulation_duration = 0.1;
+simulation_duration = 0.5;
 
 
 %% Prepare Data
@@ -175,9 +179,9 @@ switch(opt_model)
         end
     case 2
         if opt_discrete == 0
-            model = circuit.simulink;
+            model = 'sim_converter.slx';
         else
-            model = circuit.discrete_simulink;
+            model = 'sim_discrete.slx';
         end
 end
 
@@ -192,6 +196,8 @@ try
     run comment_simulink
 
     for i=Ns:-1:1
+        
+        Vref = test_voltages(i);
 
         % Calculate the P matrix, as the equilibrium point. Calculation will be
         % in accordance with the chosen control theorem

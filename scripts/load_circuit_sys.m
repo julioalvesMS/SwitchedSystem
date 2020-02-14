@@ -14,8 +14,13 @@ sys = circuit.get_sys();
 sys.U = Vs;
 sys.x0 = x0;
 
-for i=1:sys.N
+
+if(exist('opt_pwm','var') && opt_pwm)
+    sensor_sample = pwm_period;
+else
+    sensor_sample = Ts;
 end
+
 
 dsys = discrete_gss(sys,Ts);
 

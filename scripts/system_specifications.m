@@ -4,17 +4,12 @@
 Ti=1e-6; % [s] - Simulation pace
 pwm_period = 5e-5; % [s] PWM period
 pwm_sample_time = 1e-6;
+Tref = 1e-3;
+Ts = 2.5e-5;
 
 current_correction_start = 0.2;
 
-sensor_sample = 3e-5;
-
 % Circuit specifications
-% R  = 0.0105; % [Ohm] - Converter Resistance
-% L  = 4.8e-6; % [H] - Converter Indutance
-% Ro = 7.5; % [Ohm] - Load Resistance
-% Co = 726e-6; % [F] - Output Capacitance
-% Rc = 0.00015; % [Ohm] - Capcitor Resistance
 Ro = 96.8; % [Ohm] - Load Resistance
 Co = 2250e-6; % [F] - Output Capacitance
 Rc = 0.04;
@@ -34,10 +29,13 @@ x0 = [0; 0];
 Tsw = -1; % [s] - Modern controller maximum switching period
 Fsw = 1/Tsw; % [Hz] - Modern controller maximum switching frequency
 
-Ts = 2.5e-5;
 
 % Parameters for dynamic reference
 Vo = 45;
 ts = 0.2;
 
-Tref = 1e-3;
+
+s = tf('s');
+F = 1/(tau*s+1);
+Fd = c2d(F, Tref, 'tustin');
+[NFd, DFd] =  tfdata(Fd);

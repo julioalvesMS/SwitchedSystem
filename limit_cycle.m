@@ -43,6 +43,8 @@ opt_minimization = 2;
 disturbance_Vin_enable = false;
 disturbance_Ro_enable = false;
 
+opt_dead_time = true;
+
 
 % Desired DC-DC converter to use
 % Options can be found  in the system directory:
@@ -89,7 +91,7 @@ run circuit_disturbance
 %% Simulate Converter 
 
 % Get model to simulate
-model = circuit.limit_cycle_simulink;
+model = 'sim_limit_cycle';
 
 load_system(model);
 

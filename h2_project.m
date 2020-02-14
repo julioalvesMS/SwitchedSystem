@@ -30,6 +30,7 @@ load('data/TESTE_02_13.mat')
 run system_specifications
 
 %% Simulation Parametersr
+opt_pwm = true;
 
 % Update the equilibrium point from the system
 % Options
@@ -37,15 +38,23 @@ run system_specifications
 %   1 - Update equilibrium based on given reference voltage
 opt_update_equilibrium = true;
 
-
 % Use a PI to determine and update the equilibrium point
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
 opt_equilibrium_controller = false;
 
+% Use a PI to correct the equilibrium current estimation
+% Options
+%   0 - Don't use the PI
+%   1 - Correct the current from the equilibrium point using a PI controller
 opt_current_correction = false;
 
+% Run with knowledge of only the equilibrium voltage.
+% Uses a filter to estimate the equilibrium current.
+% Options
+%   0 - Don't use the filter
+%   1 - Use the filter to estimate the equilibrium current
 opt_partial_information = false;
 
 % Choose between a constant output voltage or one with a different profile
@@ -54,7 +63,18 @@ opt_partial_information = false;
 %   1 - Use constante reference
 opt_constant_reference = true;
 
+% Disturbances to be applied during simulations
+% Options
+%   disturbance_Vin_enable - Enable step disturbance in the input voltage
+%   disturbance_Ro_enable - Enable step disturbance in the load resistance
+disturbance_Vin_enable = false;
+disturbance_Ro_enable = false;
 
+% Simulate the dead time observed in real life switches
+% Options
+%   0 - Consider ideal switches
+%   1 - Consider dead time
+opt_dead_time = true;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -72,12 +92,8 @@ lambda = [0.5 0.5];
 %% Prepare Data
 
 run load_circuit_sys
-s = tf('s');
-z = tf('z', pwm_period);
-F = 1/(tau*s+1);
-Fd = c2d(F, 1e-3, 'tustin');
-[NFd, DFd] =  tfdata(Fd);
 
+run circuit_disturbance
 
 current_correction_gain =  circuit.current_correction_gain;
 
@@ -147,7 +163,7 @@ Yref = C*xe;
 close all
 
 
-sim('feedback_buck', 0.1)
+sim('sim_feedback', 0.1)
 i=1;
 plot_compression_rate = 1
 sim_out(i).IL = downsample_timeseries(logsout.get('IL').Values, plot_compression_rate);
