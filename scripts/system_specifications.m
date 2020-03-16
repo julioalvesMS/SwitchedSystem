@@ -38,4 +38,4 @@ ts = 0.2;
 s = tf('s');
 F = 1/(tau*s+1);
 Fd = c2d(F, Tref, 'tustin');
-[NFd, DFd] =  tfdata(Fd);
+[NFd, DFd] =  tfdata(Fd, 'v');

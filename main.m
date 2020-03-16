@@ -53,7 +53,7 @@ opt_theorem = 2;
 % Options
 %   0 - Use default control system
 %   1 - Use pwm control system
-opt_pwm = true;
+opt_pwm = false;
 
 % Use Current Control or only Voltage Control for PWM
 % Options
@@ -84,7 +84,7 @@ opt_current_correction = false;
 % Options
 %   0 - Don't use the filter
 %   1 - Use the filter to estimate the equilibrium current
-opt_partial_information = false;
+opt_partial_information = true;
 
 % Choose between a constant output voltage or one with a different profile
 % Options
@@ -111,7 +111,7 @@ opt_dead_time = true;
 %   boost
 %   buck_boost
 %   buck_boost_non_inverting
-circuit = buck(R, Ro, Co, L);
+circuit = buck_boost(R, Ro, Co, L);
 
 
 test_voltages = circuit.test_voltages;
@@ -119,7 +119,7 @@ test_voltages = circuit.single_voltage;
 
 % test_voltages = [190];
 
-simulation_duration = 0.1;
+simulation_duration = 3;
 
 
 %% Prepare Data
