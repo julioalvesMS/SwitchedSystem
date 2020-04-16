@@ -34,7 +34,7 @@ run system_specifications
 %   1 - Cost
 %   2 - H2
 %   3 - Hinf
-opt_minimization = 2;
+opt_minimization = 1;
 
 % Disturbances to be applied during simulations
 % Options
@@ -143,7 +143,9 @@ if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 %%
-keyboard;
+
+return
+%%
 
 close all;
 

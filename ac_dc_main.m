@@ -21,13 +21,9 @@ plot_compression_rate = 1e0;
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
-
-load('data/CURVAS_02_04_compare.mat')
-load('data/TESTE_02_13.mat')
-
 %% System Specifications
 
-run system_specifications
+run ac_dc_system_specifications
 
 %% Simulation Parametersr
 
@@ -61,36 +57,11 @@ opt_pwm = false;
 %   1 - Use voltage and current control
 opt_pwm_current_controller = false;
 
-% Update the equilibrium point from the system
-% Options
-%   0 - Use given equilibrium
-%   1 - Update equilibrium based on given reference voltage
-opt_update_equilibrium = true;
-
-% Use a PI to determine and update the equilibrium point
-% Options
-%   0 - Don't use the PI
-%   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = false;
-
-% Use a PI to correct the equilibrium current estimation
-% Options
-%   0 - Don't use the PI
-%   1 - Correct the current from the equilibrium point using a PI controller
-opt_current_correction = false;
-
-% Run with knowledge of only the equilibrium voltage.
-% Uses a filter to estimate the equilibrium current.
-% Options
-%   0 - Don't use the filter
-%   1 - Use the filter to estimate the equilibrium current
-opt_partial_information = false;
-
 % Choose between a constant output voltage or one with a different profile
 % Options
 %   0 - Update reference according to the profile in the simulink
 %   1 - Use constante reference
-opt_constant_reference = false;
+opt_constant_reference = true;
 
 % Disturbances to be applied during simulations
 % Options
@@ -105,27 +76,18 @@ disturbance_Ro_enable = false;
 %   1 - Consider dead time
 opt_dead_time = false;
 
-% Desired DC-DC converter to use
+% Desired AC-DC converter to use
 % Options can be found in the system directory:
-%   buck
-%   boost
-%   buck_boost
-%   buck_boost_non_inverting
-circuit = buck_boost(R, Ro, Co, L);
+%   rectifier
+circuit = rectifier(R, L, Co);
 
-
-test_voltages = circuit.test_voltages;
 test_voltages = circuit.single_voltage;
-test_voltages = 120;
 
-% test_voltages = [190];
 
-simulation_duration = 13;
+simulation_duration = 0.4;
 
 
 %% Prepare Data
-
-current_correction_gain =  circuit.current_correction_gain;
 
 pwm_pid_kp = circuit.pwm_pid_kp;
 pwm_pid_ki = circuit.pwm_pid_ki;
@@ -135,38 +97,11 @@ pwm_pid_vc_vi = circuit.pwm_pid_vc_vi;
 pwm_pid_vc_cp = circuit.pwm_pid_vc_cp;
 pwm_pid_vc_ci = circuit.pwm_pid_vc_ci;
 
-reference_pid_kp = circuit.reference_pid_kp;
-reference_pid_ki = circuit.reference_pid_ki;
-
-[reference_ve_limit_lower, reference_ve_limit_upper] = get_reference_ve_limits(circuit, Vs);
-
-run load_circuit_sys
-
-run circuit_disturbance
+run ac_dc_load_circuit_sys
 
 %% Lambdas to simulate
 
-if sys.N == 2
-    lambdas = generate_lambda_voltage(sys, test_voltages);
-else
-
-    step = 0.25;
-    sequence = 0:step:1;
-    test_lambdas = zeros(15, 3);
-    index = 1;
-    for lambda1=sequence
-        for lambda2=0:step:(1-lambda1)
-            lambda3 = 1 - lambda2 - lambda1;
-            test_lambdas(index,1) = lambda1;
-            test_lambdas(index,2) = lambda2;
-            test_lambdas(index,3) = lambda3;
-            index = index+1;
-        end
-    end
-    lambdas = test_lambdas;
-
-    lambdas = [0.4 0.2 0.4];
-end
+lambdas = ones(1,sys.N)*(1/sys.N);
 
 %% Simulate Converter 
 
@@ -180,7 +115,7 @@ switch(opt_model)
         end
     case 2
         if opt_discrete == 0
-            model = 'sim_converter.slx';
+            model = 'sim_rectifier.slx';
         else
             model = 'sim_discrete.slx';
         end
@@ -193,8 +128,6 @@ bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
 try
     load_system(model);
-    
-    run comment_simulink
 
     for i=Ns:-1:1
         
@@ -207,7 +140,7 @@ try
                 case 1
                     [P, xe] = calc_sys_theorem_1(sys, lambdas(i,:));
                 case 2
-                    [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:));
+                    [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:), [Vref 0 0]');
             end
         else
             [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambdas(i,:));
@@ -236,13 +169,11 @@ try
 
         % Store only samples of the data, this will be made in order to save
         % memory use
-        sim_out(i).IL = downsample_timeseries(logsout.get('IL').Values, plot_compression_rate);
-        sim_out(i).Vout = downsample_timeseries(logsout.get('Vout').Values, plot_compression_rate);
-        sim_out(i).xe = downsample_timeseries(logsout.get('xe').Values, plot_compression_rate);
+        sim_out(i).Vabc = downsample_timeseries(logsout.get('Vabc').Values, plot_compression_rate);
+        sim_out(i).Vdc = downsample_timeseries(logsout.get('Vdc').Values, plot_compression_rate);
         sim_out(i).Vref = downsample_timeseries(logsout.get('Vref').Values, plot_compression_rate);
     end
     
-    uncomment_blocks(model)
     
 catch exception
     close(bar);
@@ -251,38 +182,3 @@ end
 close(bar);
 
 %% Analysis
-
-plot_voltage_current(sim_out, circuit.name, image_folder);
-
-plot_voltage_time(sim_out, circuit.name, image_folder);
-
-plot_current_time(sim_out, circuit.name, image_folder);
-
-if disturbance_Ro_enable == 1
-    plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
-end
-
-if disturbance_Vin_enable == 1
-    plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
-end
-
-% figure;
-% switches = logsout.get('State').Values.Data;
-% Fa = abs(fft(switches));
-% F = Fa(1:round(end/2));
-% f = 0:1/simulation_duration:1/(2*Ti);
-% plot(f,F);
-
-%% Fim do script
-return
-%%
-close all
-
-EXP_CONV = Buck_PWM;
-plot_voltage_time(sim_out, circuit.name, image_folder);
-hold on
-plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.Vof - 0.38)
-
-plot_current_time(sim_out, circuit.name, image_folder);
-hold on
-plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.IL + 0.3667)

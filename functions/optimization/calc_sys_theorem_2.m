@@ -1,4 +1,4 @@
-function [P, xe] = calc_sys_theorem_2(sys, lambda)
+function [P, xe] = calc_sys_theorem_2(sys, lambda, xe)
 %CALC_SYS_CHAINED_2 Calculate a P matrix to stable all subsystems
 %   Returns the P matrix
 
@@ -7,9 +7,12 @@ function [P, xe] = calc_sys_theorem_2(sys, lambda)
 %         L/2     0
 %         0       Co/2
 %     ];
-    
-    [Al, Bl, ~] = calc_sys_lambda(sys, lambda);
-    xe = -Al\Bl*sys.U;
+
+
+    if(~exist('xe','var'))
+        [Al, Bl, ~] = calc_sys_lambda(sys, lambda);
+        xe = -Al\Bl*sys.U;
+    end
     
     P = solve_P_lmi(sys, xe);
 end
@@ -22,6 +25,7 @@ function Po = solve_P_lmi(sys, xe)
     x0 = sys.x0;
     
     nx = size(A{1},1);
+    
 
     % Descreve a LMI a ser projetada
     setlmis([]);
@@ -58,7 +62,7 @@ function Po = solve_P_lmi(sys, xe)
 
     if (isempty(copt))
         ME = MException('LmiException:noPossibleResult', ...
-        'A LMI não encontrou nenhuma resposta para P');
+        'A LMI nï¿½o encontrou nenhuma resposta para P');
         throw(ME)
     end
 
