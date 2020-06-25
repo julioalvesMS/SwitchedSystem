@@ -10,12 +10,12 @@ classdef buck_boost
         
         test_voltages = 10:20:170;
         
-        single_voltage = 80;
+        single_voltage = 100;
         limit_cycle_voltage = 80;
         limit_cycle_gamma = [0 0.3];
         
-        pwm_pid_kp = 0.0020;
-        pwm_pid_ki = 0.2;
+        pwm_pid_kp = 0.00483;
+        pwm_pid_ki = 0.147;
         
         pwm_pid_vc_vp = 0.316;
         pwm_pid_vc_vi = 3.23;
@@ -25,7 +25,7 @@ classdef buck_boost
         reference_pid_kp = 1;
         reference_pid_ki = 15.3;
         
-        current_correction_gain = 2;
+        current_correction_gain = 0.8;
     end
     
     properties
@@ -67,8 +67,8 @@ classdef buck_boost
             D{2} = D{1};
 
             Q{1} = [
-                1e-1   0
-                0   1/self.Ro
+                self.R   0
+                0       1e3/self.Ro
             ];
             Q{2} = Q{1};
 

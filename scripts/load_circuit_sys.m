@@ -14,6 +14,12 @@ sys = circuit.get_sys();
 sys.U = Vs;
 sys.x0 = x0;
 
+if (isa(circuit, 'boost'))
+    Vi = Ro*Vs/(Ro + R);
+else
+    Vi = 0;
+end
+    
 
 if(exist('opt_pwm','var') && opt_pwm)
     sensor_sample = pwm_period;

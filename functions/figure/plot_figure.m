@@ -7,7 +7,7 @@ function plot_figure(data, configuration)
     hold all;
     
     for i=1:length(data)
-        plot(data(i).x1, data(i).y1);
+        plot(data(i).x1, data(i).y1, 'LineWidth',2);
         if isfield(data, 'y2')
             plot(data(i).x2, data(i).y2, 'black--');
         end

@@ -10,7 +10,7 @@ classdef buck
         
         test_voltages = 5:5:50;
         
-        single_voltage = 30;
+        single_voltage = 10;
         limit_cycle_voltage = 30;
         limit_cycle_gamma = [0 3];
         limit_cycle_kappa = 10;

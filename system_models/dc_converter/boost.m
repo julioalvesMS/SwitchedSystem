@@ -10,7 +10,7 @@ classdef boost
         
         test_voltages = 80:20:200;
         
-        single_voltage = 150;
+        single_voltage = 100;
         limit_cycle_voltage = 100;
         limit_cycle_gamma = [0 0.5];
         

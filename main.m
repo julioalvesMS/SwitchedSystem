@@ -21,10 +21,6 @@ plot_compression_rate = 1e0;
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
 
-
-load('data/CURVAS_02_04_compare.mat')
-load('data/TESTE_02_13.mat')
-
 %% System Specifications
 
 run system_specifications
@@ -77,7 +73,7 @@ opt_equilibrium_controller = false;
 % Options
 %   0 - Don't use the PI
 %   1 - Correct the current from the equilibrium point using a PI controller
-opt_current_correction = false;
+opt_current_correction = true;
 
 % Run with knowledge of only the equilibrium voltage.
 % Uses a filter to estimate the equilibrium current.
@@ -90,7 +86,7 @@ opt_partial_information = false;
 % Options
 %   0 - Update reference according to the profile in the simulink
 %   1 - Use constante reference
-opt_constant_reference = false;
+opt_constant_reference = true;
 
 % Disturbances to be applied during simulations
 % Options
@@ -103,7 +99,13 @@ disturbance_Ro_enable = false;
 % Options
 %   0 - Consider ideal switches
 %   1 - Consider dead time
-opt_dead_time = false;
+opt_dead_time = true;
+
+% Simulate the dead time observed in real life switches
+% Options
+%   0 - Consider ideal switches
+%   1 - Consider dead time
+opt_mode_hopping = true;
 
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
@@ -114,15 +116,23 @@ opt_dead_time = false;
 circuit = buck_boost(R, Ro, Co, L);
 
 
-test_voltages = circuit.test_voltages;
+%test_voltages = circuit.test_voltages;
 test_voltages = circuit.single_voltage;
-test_voltages = 120;
+%test_voltages = 300;
 
 % test_voltages = [190];
 
-simulation_duration = 13;
+simulation_duration = 1;
 
 
+%% Measurements
+
+opt_measurement_frequency = true;
+opt_measurement_efficiency = false;
+opt_measurement_clock = true;
+
+
+mu = -1
 %% Prepare Data
 
 current_correction_gain =  circuit.current_correction_gain;
@@ -232,14 +242,18 @@ try
         waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));
 
         % Run simulation
+        tic
         sim(model, simulation_duration);
+        toc
 
         % Store only samples of the data, this will be made in order to save
         % memory use
-        sim_out(i).IL = downsample_timeseries(logsout.get('IL').Values, plot_compression_rate);
-        sim_out(i).Vout = downsample_timeseries(logsout.get('Vout').Values, plot_compression_rate);
-        sim_out(i).xe = downsample_timeseries(logsout.get('xe').Values, plot_compression_rate);
-        sim_out(i).Vref = downsample_timeseries(logsout.get('Vref').Values, plot_compression_rate);
+        sim_out(i).IL = get_logged_data(logsout, 'IL', plot_compression_rate);
+        sim_out(i).Vout = get_logged_data(logsout, 'Vout', plot_compression_rate);
+        sim_out(i).xe = get_logged_data(logsout, 'xe', plot_compression_rate);
+        sim_out(i).Vref = get_logged_data(logsout, 'Vref', plot_compression_rate);
+        sim_out(i).F = get_logged_data(logsout, 'F', plot_compression_rate);
+        sim_out(i).Eff = get_logged_data(logsout, 'Eff', plot_compression_rate);
     end
     
     uncomment_blocks(model)
@@ -250,6 +264,24 @@ catch exception
 end
 close(bar);
 
+%%
+
+if sim_out(1).F.Data
+    dt = 1e-6;
+    F = [];
+    FV = [];
+
+    for t=0.9:0.5:max(sim_out(i).F.Time)
+        data = getsampleusingtime(sim_out(i).F, t-dt, t+dt);
+        Rdata = getsampleusingtime(sim_out(i).Vref, t-dt, t+dt);
+
+        F(end+1) = mean(data.Data);
+        FV(end+1) = mean(Rdata.Data);
+    end
+
+    figure
+    plot(FV, F, 'd-');
+end
 %% Analysis
 
 plot_voltage_current(sim_out, circuit.name, image_folder);
@@ -266,14 +298,12 @@ if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 
-% figure;
-% switches = logsout.get('State').Values.Data;
-% Fa = abs(fft(switches));
-% F = Fa(1:round(end/2));
-% f = 0:1/simulation_duration:1/(2*Ti);
-% plot(f,F);
-
 %% Fim do script
+
+if sim_out(1).Eff.Data
+    sim_out(1).Eff.Data(end)
+end
+
 return
 %%
 close all
@@ -286,3 +316,35 @@ plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.Vof - 0.38)
 plot_current_time(sim_out, circuit.name, image_folder);
 hold on
 plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.IL + 0.3667)
+
+%%
+close all
+load('matlab4_bb.mat')
+
+figure
+hold all
+plot(th_2_dis_FV, th_2_dis_F/1e3, '+-black')
+plot(th_2_dis_dd_FV, th_2_dis_dd_F/1e3, '+-r')
+hold off
+legend('Ideal switches', 'Switches with Dead-Time')
+%set(legend, 'Position',[0.345238102475802 0.866269843540494 0.333928564190865 0.0869047596341088]);
+ylabel('Switching frequency [kHz]')
+xlabel('Output voltage [V]')
+%set(gcf, 'Position',  [100, 100, 1600, 780])
+set(gcf,'renderer','Painters')
+saveas(gcf, strcat(image_folder, 'frequency_simulation_discrete_controller'), 'epsc');
+
+figure
+hold all
+plot(th_2_con_FV, th_2_con_F/1e3, '+-black')
+plot(th_2_con_dd_FV, th_2_con_dd_F/1e3, '+-r')
+hold off
+legend('Ideal switches', 'Switches with Dead-Time')
+%set(legend, 'Position',[0.345238102475802 0.866269843540494 0.333928564190865 0.0869047596341088]);
+ylabel('Switching frequency [kHz]')
+xlabel('Output voltage [V]')
+%set(gcf, 'Position',  [100, 100, 1600, 780])
+set(gcf,'renderer','Painters')
+saveas(gcf, strcat(image_folder, 'frequency_simulation_continuous_controller'), 'epsc');
+
+

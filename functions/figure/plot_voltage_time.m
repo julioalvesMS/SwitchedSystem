@@ -12,7 +12,7 @@ function plot_voltage_time(sim_out, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Tensão x Tempo');
+    configuration.title = strcat(name, ' - Voltage x Time');
 
     tmp_legends = cell(1,length(sim_out)*2);
     

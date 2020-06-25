@@ -12,7 +12,7 @@ function plot_current_time(sim_out, name, folder)
         configuration.folder_path = folder;
     end
     
-    configuration.title = strcat(name, ' - Corrente x Tempo');
+    configuration.title = strcat(name, ' - Current x Time');
 
     for i=length(sim_out):-1:1
         data(i).x1 = sim_out(i).IL.Time*1e3;

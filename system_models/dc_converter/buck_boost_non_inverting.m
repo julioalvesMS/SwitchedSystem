@@ -10,7 +10,7 @@ classdef buck_boost_non_inverting
         
         test_voltages = 10:20:170;
         
-        single_voltage = 120;
+        single_voltage = 40;
         limit_cycle_voltage = 80;
         limit_cycle_gamma = [0 1];
         

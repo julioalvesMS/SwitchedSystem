@@ -5,9 +5,9 @@ Ti=1e-6; % [s] - Simulation pace
 pwm_period = 5e-5; % [s] PWM period
 pwm_sample_time = 1e-6;
 Tref = 1e-3;
-Ts = 2.5e-5;
 
-current_correction_start = 1;
+%current_correction_start = 0.3;
+current_correction_start = 0;
 
 % Circuit specifications
 Ro = 96.8; % [Ohm] - Load Resistance
@@ -26,8 +26,9 @@ x0 = [0; 0];
 
 % Main control specifications
 % Tsw = 5e-5; % [s] - Modern controller maximum switching period
-Tsw = -1; % [s] - Modern controller maximum switching period
-Fsw = 1/Tsw; % [Hz] - Modern controller maximum switching frequency
+Ts = 1/40e3; % [s] - Modern controller maximum switching period
+Ts = Ti;  % [s] - Modern controller maximum switching period
+Fs = 1/Ts;   % [Hz] - Modern controller maximum switching frequency
 
 
 % Parameters for dynamic reference
