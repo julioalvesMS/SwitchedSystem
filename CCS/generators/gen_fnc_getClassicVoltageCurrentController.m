@@ -17,17 +17,17 @@ function [str] = gen_fnc_getClassicVoltageCurrentController(circuit, T)
     y = {
 "    void " + circuit.class_name + "::GetClassicVoltageCurrentController(double vNum[2], double vDen[2], double iNum[2], double iDen[2])"
 "    {"
-"        vNum[0] = " + sprintf('%g;',vNum(1));
-"        vNum[1] = " + sprintf('%g;',vNum(2));
+"        vNum[0] = " + sprintf('%.10g;',vNum(1));
+"        vNum[1] = " + sprintf('%.10g;',vNum(2));
 ""
-"        vDen[0] = " + sprintf('%g;',vDen(1));
-"        vDen[1] = " + sprintf('%g;',vDen(2));
+"        vDen[0] = " + sprintf('%.10g;',vDen(1));
+"        vDen[1] = " + sprintf('%.10g;',vDen(2));
 ""
-"        iNum[0] = " + sprintf('%g;',iNum(1));
-"        iNum[1] = " + sprintf('%g;',iNum(2));
+"        iNum[0] = " + sprintf('%.10g;',iNum(1));
+"        iNum[1] = " + sprintf('%.10g;',iNum(2));
 ""
-"        iDen[0] = " + sprintf('%g;',iDen(1));
-"        iDen[1] = " + sprintf('%g;',iDen(2));
+"        iDen[0] = " + sprintf('%.10g;',iDen(1));
+"        iDen[1] = " + sprintf('%.10g;',iDen(2));
 "    }"
     };
     str=sprintf('%s\n',y{:});

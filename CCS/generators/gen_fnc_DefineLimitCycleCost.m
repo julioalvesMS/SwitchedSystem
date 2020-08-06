@@ -4,7 +4,7 @@ function [str] = gen_fnc_DefineLimitCycleCost(dsys, cycle)
 "    {"
 "        CycleStep* step;"
 ""
-"        limitCycle.kappa = " + sprintf('%g;',cycle.kappa);
+"        limitCycle.kappa = " + sprintf('%.10g;',cycle.kappa);
     };
     
 for i=1:cycle.kappa
@@ -19,15 +19,15 @@ for i=1:cycle.kappa
     "        //"
     "        // Cycle Step "+id+" -- Matrix P"
     "        //"
-    "        step->P[0][0] = " + sprintf('%g;',cycle.lyap.P{i}(1,1));
-    "        step->P[0][1] = " + sprintf('%g;',cycle.lyap.P{i}(1,2));
-    "        step->P[1][0] = " + sprintf('%g;',cycle.lyap.P{i}(2,1));
-    "        step->P[1][1] = " + sprintf('%g;',cycle.lyap.P{i}(2,2));
+    "        step->P[0][0] = " + sprintf('%.10g;',cycle.lyap.P{i}(1,1));
+    "        step->P[0][1] = " + sprintf('%.10g;',cycle.lyap.P{i}(1,2));
+    "        step->P[1][0] = " + sprintf('%.10g;',cycle.lyap.P{i}(2,1));
+    "        step->P[1][1] = " + sprintf('%.10g;',cycle.lyap.P{i}(2,2));
     "        //"
     "        // Cycle Step "+id+" -- Vector Xe"
     "        //"
-    "        step->Xe[0] = " + sprintf('%g;',cycle.xe_h{i}(1));
-    "        step->Xe[1] = " + sprintf('%g;',cycle.xe_h{i}(2));
+    "        step->Xe[0] = " + sprintf('%.10g;',cycle.xe_h{i}(1));
+    "        step->Xe[1] = " + sprintf('%.10g;',cycle.xe_h{i}(2));
     "        //"
     "        // Cycle Step "+id+" -- Matrix ell"
     "        //"
@@ -36,8 +36,8 @@ for i=1:cycle.kappa
     for j=1:dsys.N
         n = sprintf("%d", j-1);
         aux_ell = {
-        "        step->ell["+n+"][0] = " + sprintf('%g;',cycle.ell{j,i}(1));
-        "        step->ell["+n+"][1] = " + sprintf('%g;',cycle.ell{j,i}(2));
+        "        step->ell["+n+"][0] = " + sprintf('%.10g;',cycle.ell{j,i}(1));
+        "        step->ell["+n+"][1] = " + sprintf('%.10g;',cycle.ell{j,i}(2));
         };
         aux = [aux; aux_ell];
     end

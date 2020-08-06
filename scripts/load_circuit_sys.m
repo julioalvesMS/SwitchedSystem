@@ -35,3 +35,15 @@ dsys = discrete_gss(sys,Ts);
 fnc_converter_Ie = circuit.get_converter_Ie_fnc();
 
 reference_controller_initial = circuit.get_reference_initial(Vs);
+
+% VOltage Filter
+Bv = [0.000027213807988318872, 2*0.0000272138079883188725,0.000027213807988318872];
+Av = [1,-1.985190657896261,0.9852995131282144 ];
+
+
+%identify converter
+
+is_buck = isa(circuit, 'buck');
+is_boost = isa(circuit, 'boost');
+is_buck_boost = isa(circuit, 'buck_boost');
+is_buck_boost_3 = isa(circuit, 'buck_boost_non_inverting');

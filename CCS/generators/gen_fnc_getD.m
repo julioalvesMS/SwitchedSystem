@@ -10,7 +10,7 @@ function [str] = gen_fnc_getD(class, dd1)
 "            //"
 "            // " + class + " Converter - Discrete Rule 1"
 "            //"
-"            d = " + sprintf('%g;',dd1);
+"            d = " + sprintf('%.10g;',dd1);
 "            break;"
 ""
 "        default:"

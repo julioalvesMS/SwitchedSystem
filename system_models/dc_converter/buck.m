@@ -10,7 +10,7 @@ classdef buck
         
         test_voltages = 5:5:50;
         
-        single_voltage = 10;
+        single_voltage = 40;
         limit_cycle_voltage = 30;
         limit_cycle_gamma = [0 3];
         limit_cycle_kappa = 10;
@@ -34,6 +34,9 @@ classdef buck
         reference_pid_ki = 100;
         
         current_correction_gain = 2;
+        
+        operation_range_voltage_min = 0;
+        operation_range_voltage_max = 60;
     end
     
     properties

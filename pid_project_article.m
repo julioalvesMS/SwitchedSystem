@@ -34,28 +34,23 @@ run system_specifications
 %   buck_boost
 circuit = buck_boost(R, Ro, Co, L);
 
-% Lambda used to create the mean system with wich the controle will be
-% designed
-% Value must be a vector where:
-%   sum(lambda) = 1
-lambda = [0.5 0.5];
-
 %% Prepare Data
 
 run load_circuit_sys
 
-%%
 
+% Lambda used to create the mean system with wich the controle will be
+% designed
+% Value must be a vector where:
+%   sum(lambda) = 1
+lambda = generate_lambda_voltage(sys, 100);
+[Alamb, Blamb, ~] = calc_sys_lambda(sys, lambda);
+Blamb = Blamb*Vs;
 
-A = [-R/L  -1/L
-      1/Co  -1/(Ro*Co)
-];
-B = [Vs/L; 0];
 C = [0 1];
-%C = [sqrt(sys.Q{1}(1,1)) sqrt(sys.Q{1}(2,2))];
 D = 0;
 
-sys_ss = ss(A, B, C, D);
+sys_ss = ss(Alamb, Blamb, C, D);
 
 Cs = 3.28/s + 0.00919;
 
@@ -68,12 +63,9 @@ G1 = Vs*((d*L/R)*s - (1-d)^2)/((1-d)^2*(L*Co*s^2 + L*s/R + (1-d)^2))
 %%
 
 %Parâmetros
-Ts = 5/10e4;
-Tint = Ts/100;
-Vo = 66;
-ts = 0.25;
+Vo = 100;
 %
-syms L Ts Ro Co R Vs Vo s
+%syms L Ts Ro Co R Vs Vo s
 do = Vo/(Vo+Vs);
 Po = Vo^2/Ro;
 ILo = Po/Vs;
@@ -85,7 +77,7 @@ a2 = (1/(L*Co))*(R/Ro+(1-do)^2);
 
 G2 = Kb*(s + z)/(s^2 + a1*s +a2)
 
-G2 = tf(Kb*[1 z],[1 a1 a2]);
+%G2 = tf(Kb*[1 z],[1 a1 a2]);
 
 %%
 close all
@@ -93,8 +85,10 @@ G = G2;
 
 % Wcg0 = 3.5e2;%frequencia de cruzamento desejada
 % MF0 = 65*(pi/180);%margem de fase desejada
-Wcg0 = 65;%frequencia de cruzamento desejada
-MF0 = 107*(pi/180);%margem de fase desejada
+% Wcg0 = 10.9;%frequencia de cruzamento desejada
+% MF0 = 108*(pi/180);%margem de fase desejada
+Wcg0 = 190;%frequencia de cruzamento desejada
+MF0 = 60*(pi/180);%margem de fase desejada
 FaseG = angle(evalfr(G,Wcg0*1i));
 Fm = MF0-FaseG-pi/2;  %passo 1
 Ti = tan(Fm)/Wcg0;    %passo 2
@@ -106,6 +100,7 @@ figure
 margin(K*G)
 pid(K)
 
+return
 %%
 
 kp = circuit.pwm_pid_kp;

@@ -10,7 +10,7 @@ classdef buck_boost_non_inverting
         
         test_voltages = 10:20:170;
         
-        single_voltage = 40;
+        single_voltage = 100;
         limit_cycle_voltage = 80;
         limit_cycle_gamma = [0 1];
         
@@ -29,6 +29,9 @@ classdef buck_boost_non_inverting
         reference_pid_ki = 100e-1;
         
         current_correction_gain = 2;
+        
+        operation_range_voltage_min = 0;
+        operation_range_voltage_max = 120;
     end
     
     properties

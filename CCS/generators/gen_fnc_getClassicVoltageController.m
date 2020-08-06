@@ -11,11 +11,11 @@ function [str] = gen_fnc_getClassicVoltageController(circuit, T)
     y = {
 "    void " + circuit.class_name + "::GetClassicVoltageController(double num[2], double den[2])"
 "    {"
-"        num[0] = " + sprintf('%g;',num(1));
-"        num[1] = " + sprintf('%g;',num(2));
+"        num[0] = " + sprintf('%.10g;',num(1));
+"        num[1] = " + sprintf('%.10g;',num(2));
 ""
-"        den[0] = " + sprintf('%g;',den(1));
-"        den[1] = " + sprintf('%g;',den(2));
+"        den[0] = " + sprintf('%.10g;',den(1));
+"        den[1] = " + sprintf('%.10g;',den(2));
 "    }"
     };
     str=sprintf('%s\n',y{:});

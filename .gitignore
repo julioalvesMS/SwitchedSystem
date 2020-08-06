@@ -2,6 +2,7 @@
 *~
 slprj/
 images/
+data_mat/
 *.autosave
 *.asv
 *.original

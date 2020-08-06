@@ -10,9 +10,9 @@ classdef boost
         
         test_voltages = 80:20:200;
         
-        single_voltage = 100;
+        single_voltage = 110;
         limit_cycle_voltage = 100;
-        limit_cycle_gamma = [0 0.5];
+        limit_cycle_gamma = [0 0.25];
         
         pwm_pid_kp = 0.0020;
         pwm_pid_ki = 0.2;
@@ -26,6 +26,9 @@ classdef boost
         reference_pid_ki = 15.3;
         
         current_correction_gain = 2;
+        
+        operation_range_voltage_min = 70;
+        operation_range_voltage_max = 120;
         
         % Gi = ((Ve/L)*s + (1-d)*Ie/(L*Co))/(s^2 - R*s/L + (1-d)^2/L*Co);
     end
@@ -69,8 +72,8 @@ classdef boost
             D{2} = D{1};
 
             Q{1} = [
-                1   0
-                0   1/self.Ro
+                self.R   0
+                0   3e1/self.Ro
             ];
             Q{2} = Q{1};
 

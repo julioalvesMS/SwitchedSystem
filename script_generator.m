@@ -49,6 +49,7 @@ config_buck_boost_3_stage.circuit = circuit_buck_boost_3_stage;
 config_buck_boost_3_stage.template = fullfile(converter_template_folder, 'buck_boost_3.cpp');
 
 config_converters = {config_buck, config_boost, config_buck_boost, config_buck_boost_3_stage};
+% config_converters = {config_buck_boost};
 
 %%
 
@@ -65,25 +66,20 @@ try
 
         run load_circuit_sys
 
-        Vref = circuit.limit_cycle_voltage;
-
-        if sys.N == 2
-            lambdas = generate_lambda_voltage(sys, Vref);
-        else
-            lambdas = [0.4 0.2 0.4];
-        end
+        range = circuit.operation_range_voltage_min:1:circuit.operation_range_voltage_max;
+        lambdas = generate_lambda_voltage(sys, range);
 
         % Calculate the P matrix, as the equilibrium point. Calculation will be
         % in accordance with the chosen control theorem
 
-        [Pc1] = calc_sys_theorem_1(sys, lambdas);
+        [Pc1] = calc_sys_theorem_1_range(sys, lambdas);
+        [Pc2] = calc_sys_theorem_2(sys);
+        [Pd1, dsys] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
 
-        [Pc2] = calc_sys_theorem_2(sys, lambdas);
-
-        [Pd1, hd1, dd1, ~, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambdas);
-
-
-        xe = [0; Vref];
+        
+        Vref = circuit.limit_cycle_voltage;
+        xe = calculate_equilibrium_point(circuit, Vs, Vref);
+%         xe = [0; Vref];
         Gamma = circuit.limit_cycle_gamma;
         [cand, kappa] = find_cycles(dsys, xe, Gamma);
 
@@ -103,37 +99,39 @@ try
 
 
         getP.fnc = gen_fnc_getP(circuit.class_name, Pc1, Pc2, Pd1);
-        getH.fnc = gen_fnc_getH(circuit.class_name, hd1);
-        getD.fnc = gen_fnc_getD(circuit.class_name, dd1);
+%         getH.fnc = gen_fnc_getH(circuit.class_name, hd1);
+%         getD.fnc = gen_fnc_getD(circuit.class_name, dd1);
+        DefineSystem.fnc = gen_fnc_DefineSystem(sys);
         DefineDiscreteSystem.fnc = gen_fnc_DefineDiscreteSystem(dsys);
         getClassicVoltageController.fnc = gen_fnc_getClassicVoltageController(circuit, pwm_period);
         getClassicVoltageCurrentController.fnc = gen_fnc_getClassicVoltageCurrentController(circuit, pwm_period);
         getStateFeedbackH2Controller.fnc = gen_fnc_getStateFeedbackH2Controller(circuit, K, C, M);
         getReferenceController.fnc = gen_fnc_getReferenceController(circuit, Tref);
+        getCurrentCorrectionController.fnc = gen_fnc_getCurrentCorrectionController(circuit, Tref);
         DefineLimitCycleCost.fnc = gen_fnc_DefineLimitCycleCost(dsys, cycle_cost);
         DefineLimitCycleH2.fnc = gen_fnc_DefineLimitCycleH2(dsys, cycle_H2);
         DefineLimitCycleHinf.fnc = gen_fnc_DefineLimitCycleHinf(dsys, cycle_Hinf);
 
         getP.tag = 'getP';
-        getH.tag = 'getH';
-        getD.tag = 'getD';
+        DefineSystem.tag = 'DefineSystem';
         DefineDiscreteSystem.tag = 'DefineDiscreteSystem';
         getClassicVoltageController.tag = 'getClassicVoltageController';
         getClassicVoltageCurrentController.tag = 'getClassicVoltageCurrentController';
         getStateFeedbackH2Controller.tag = 'getStateFeedbackH2Controller';
         getReferenceController.tag = 'getReferenceController';
+        getCurrentCorrectionController.tag = 'getCurrentCorrectionController';
         DefineLimitCycleCost.tag = 'DefineLimitCycleCost';
         DefineLimitCycleH2.tag = 'DefineLimitCycleH2';
         DefineLimitCycleHinf.tag = 'DefineLimitCycleHinf';
 
         file_fnc = {
             getP
-            getH
-            getD
             getClassicVoltageController
             getClassicVoltageCurrentController
             getStateFeedbackH2Controller
             getReferenceController
+            getCurrentCorrectionController
+            DefineSystem
             DefineDiscreteSystem
             DefineLimitCycleCost
             DefineLimitCycleH2

@@ -1,5 +1,5 @@
 %% Initial Setup
-clear; clc; close all;
+% clear; clc; close all;
 
 % folders to create
 image_folder = 'images';
@@ -20,6 +20,7 @@ plot_compression_rate = 1e0;
 
 
 Simulink.fileGenControl('set', 'CacheFolder', cache_folder);
+Simulink.fileGenControl('set', 'CodeGenFolder', cache_folder);
 
 %% System Specifications
 
@@ -37,13 +38,19 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = false;
+opt_discrete = true;
 
 % Desired Theorem to use
 % Theorems defines
 %   1 - Fixed Equilibrium
 %   2 - Valiable Equilibrium
-opt_theorem = 2;
+opt_theorem = 1;
+
+% Project controller for a single point or for a range
+% Options:
+%   0 - Single Point
+%   1 - Range of operation
+opt_range_design = true;
 
 % Use PWM Controled mode or default switched control
 % Options
@@ -93,7 +100,13 @@ opt_constant_reference = true;
 %   disturbance_Vin_enable - Enable step disturbance in the input voltage
 %   disturbance_Ro_enable - Enable step disturbance in the load resistance
 disturbance_Vin_enable = false;
-disturbance_Ro_enable = false;
+disturbance_Ro_enable = true;
+
+% Choose between a constant output voltage or one with a different profile
+% Options
+%   0 - Update reference according to the profile in the simulink
+%   1 - Use constante reference
+opt_variable_load = false;
 
 % Simulate the dead time observed in real life switches
 % Options
@@ -107,6 +120,12 @@ opt_dead_time = true;
 %   1 - Consider dead time
 opt_mode_hopping = true;
 
+% Simulate the dead time observed in real life switches
+% Options
+%   0 - Consider ideal switches
+%   1 - Consider dead time
+opt_sensor_noises = false;
+
 % Desired DC-DC converter to use
 % Options can be found in the system directory:
 %   buck
@@ -118,21 +137,28 @@ circuit = buck_boost(R, Ro, Co, L);
 
 %test_voltages = circuit.test_voltages;
 test_voltages = circuit.single_voltage;
-%test_voltages = 300;
+% test_voltages = 5;
 
 % test_voltages = [190];
 
-simulation_duration = 1;
+mu = -1;
+
+simulation_duration = 3;
+
+
+% Ts = 1/1000e3; % [s] - Modern controller maximum switching period
+% Fs = 1/Ts;   % [Hz] - Modern controller maximum switching frequency
 
 
 %% Measurements
 
-opt_measurement_frequency = true;
+opt_measurement_frequency = false;
 opt_measurement_efficiency = false;
-opt_measurement_clock = true;
+opt_measurement_ripple = false;
+opt_measurement_clock = false;
+opt_measurement_error = false;
 
 
-mu = -1
 %% Prepare Data
 
 current_correction_gain =  circuit.current_correction_gain;
@@ -154,50 +180,26 @@ run load_circuit_sys
 
 run circuit_disturbance
 
-%% Lambdas to simulate
-
-if sys.N == 2
-    lambdas = generate_lambda_voltage(sys, test_voltages);
-else
-
-    step = 0.25;
-    sequence = 0:step:1;
-    test_lambdas = zeros(15, 3);
-    index = 1;
-    for lambda1=sequence
-        for lambda2=0:step:(1-lambda1)
-            lambda3 = 1 - lambda2 - lambda1;
-            test_lambdas(index,1) = lambda1;
-            test_lambdas(index,2) = lambda2;
-            test_lambdas(index,3) = lambda3;
-            index = index+1;
-        end
-    end
-    lambdas = test_lambdas;
-
-    lambdas = [0.4 0.2 0.4];
-end
-
 %% Simulate Converter 
 
 % Get model to simulate
 switch(opt_model)
     case 1
         if opt_discrete == 0
-            model = 'general_system.slx';
+            model = 'general_system';
         else
-            model = 'discrete_general_system.slx';
+            model = 'discrete_general_system';
         end
     case 2
         if opt_discrete == 0
-            model = 'sim_converter.slx';
+            model = 'sim_converter';
         else
-            model = 'sim_discrete.slx';
+            model = 'sim_discrete';
         end
 end
 
 % Number of simulations to run
-Ns = size(lambdas, 1);
+Ns = size(test_voltages, 1);
 
 bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
@@ -206,21 +208,31 @@ try
     
     run comment_simulink
 
-    for i=Ns:-1:1
+%     for i=Ns:-1:1
+    for i=4
         
-        Vref = test_voltages(i);
+        Vref = test_voltages(1);
+        
+        if opt_range_design == 0
+            lambdas = generate_lambda_voltage(sys, circuit.limit_cycle_voltage);
+        else
+            range = circuit.operation_range_voltage_min:1:circuit.operation_range_voltage_max;
+            lambdas = generate_lambda_voltage(sys, range);
+        end
 
+        xe = calculate_equilibrium_point(circuit, Vs, circuit.limit_cycle_voltage);
+        
         % Calculate the P matrix, as the equilibrium point. Calculation will be
         % in accordance with the chosen control theorem
         if opt_discrete == 0
             switch(opt_theorem)
                 case 1
-                    [P, xe] = calc_sys_theorem_1(sys, lambdas(i,:));
+                    P = calc_sys_theorem_1_range(sys, lambdas);
                 case 2
-                    [P, xe] = calc_sys_theorem_2(sys, lambdas(i,:));
+                    P = calc_sys_theorem_2(sys);
             end
         else
-            [P, h, d, xe, dsys] = calc_sys_discrete_theorem_1(sys, dsys, lambdas(i,:));
+            [P, dsys] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
         end
 
         % Convert the truct used to represent the space state to double, so it
@@ -234,7 +246,7 @@ try
         if opt_discrete == 0
             SystemDataBus = create_bus_SystemDataBus(A, B, P, Q, sys.N);
         else
-            SystemDataBus = create_bus_DiscreteSystemDataBus(Ad, Bd, P, Qd, sys.N, h, Ld);
+            SystemDataBus = create_bus_DiscreteSystemDataBus(Ad, Bd, P, Qd, sys.N, Ld);
         end
             
 
@@ -243,17 +255,22 @@ try
 
         % Run simulation
         tic
+        set_param(model,'SignalLogging','on')
+        set_param(model, 'SignalLoggingName', 'logsout')
+        set_param(model,'SimulationMode','rapid')
         sim(model, simulation_duration);
         toc
 
         % Store only samples of the data, this will be made in order to save
         % memory use
+        sim_out(i).xe = get_logged_data(logsout, 'xe', plot_compression_rate);
         sim_out(i).IL = get_logged_data(logsout, 'IL', plot_compression_rate);
         sim_out(i).Vout = get_logged_data(logsout, 'Vout', plot_compression_rate);
-        sim_out(i).xe = get_logged_data(logsout, 'xe', plot_compression_rate);
         sim_out(i).Vref = get_logged_data(logsout, 'Vref', plot_compression_rate);
+        sim_out(i).Verr = get_logged_data(logsout, 'Verr', plot_compression_rate);
         sim_out(i).F = get_logged_data(logsout, 'F', plot_compression_rate);
         sim_out(i).Eff = get_logged_data(logsout, 'Eff', plot_compression_rate);
+        sim_out(i).Ripple = get_logged_data(logsout, 'Voltage Ripple', plot_compression_rate);
     end
     
     uncomment_blocks(model)
@@ -263,25 +280,8 @@ catch exception
     rethrow(exception);
 end
 close(bar);
+    plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
 
-%%
-
-if sim_out(1).F.Data
-    dt = 1e-6;
-    F = [];
-    FV = [];
-
-    for t=0.9:0.5:max(sim_out(i).F.Time)
-        data = getsampleusingtime(sim_out(i).F, t-dt, t+dt);
-        Rdata = getsampleusingtime(sim_out(i).Vref, t-dt, t+dt);
-
-        F(end+1) = mean(data.Data);
-        FV(end+1) = mean(Rdata.Data);
-    end
-
-    figure
-    plot(FV, F, 'd-');
-end
 %% Analysis
 
 plot_voltage_current(sim_out, circuit.name, image_folder);
@@ -303,7 +303,6 @@ end
 if sim_out(1).Eff.Data
     sim_out(1).Eff.Data(end)
 end
-
 return
 %%
 close all

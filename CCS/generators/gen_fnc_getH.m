@@ -8,8 +8,8 @@ function [str] = gen_fnc_getH(class, hd1)
 "            //"
 "            // " + class + " Converter - Discrete Rule 1"
 "            //"
-"            h[0] = " + sprintf('%g;',hd1(1));
-"            h[1] = " + sprintf('%g;',hd1(2));
+"            h[0] = " + sprintf('%.10g;',hd1(1));
+"            h[1] = " + sprintf('%.10g;',hd1(2));
 "            break;"
 ""
 "        default:"

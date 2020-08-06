@@ -1,4 +1,4 @@
-function [P, xe] = calc_sys_theorem_2(sys, lambda, xe)
+function P = calc_sys_theorem_2(sys)
 %CALC_SYS_CHAINED_2 Calculate a P matrix to stable all subsystems
 %   Returns the P matrix
 
@@ -7,22 +7,15 @@ function [P, xe] = calc_sys_theorem_2(sys, lambda, xe)
 %         L/2     0
 %         0       Co/2
 %     ];
-
-
-    if(~exist('xe','var'))
-        [Al, Bl, ~] = calc_sys_lambda(sys, lambda);
-        xe = -Al\Bl*sys.U;
-    end
     
-    P = solve_P_lmi(sys, xe);
+    P = solve_P_lmi(sys);
 end
 
-function Po = solve_P_lmi(sys, xe)
+function Po = solve_P_lmi(sys)
 
     N = sys.N;
     A = sys.A;
     Q = sys.Q;
-    x0 = sys.x0;
     
     nx = size(A{1},1);
     
@@ -55,7 +48,7 @@ function Po = solve_P_lmi(sys, xe)
     c = zeros(np,1);
     for i=1:np
         Pi = defcx(lmisys,i,P);
-        c(i) = (x0-xe)'*Pi*(x0-xe);
+        c(i) = trace(Pi);
     end
 
     [copt,xopt] = mincx(lmisys,c,options);
