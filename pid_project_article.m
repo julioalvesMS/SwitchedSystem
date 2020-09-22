@@ -56,8 +56,29 @@ Cs = 3.28/s + 0.00919;
 
 Gss = tf(sys_ss);
 
-d = 0.5;
+%Parâmetros
+Vo = 100;
+d = Vo/(Vo+Vs);
 G1 = Vs*((d*L/R)*s - (1-d)^2)/((1-d)^2*(L*Co*s^2 + L*s/R + (1-d)^2))
+
+
+%%
+
+%Parâmetros
+Vo = 100;
+%
+%syms L Ts Ro Co R Vs Vo s
+do = Vo/(Vo+Vs);
+Po = Vo^2/Ro;
+ILo = Po/Vs;
+VdV = Vs - V;
+%Função de transferência do Boost
+Kb = -Vgv/do^2;
+z = -(L*ILo)/VgV;
+a1 = (L*Co)/do^2;
+a2 = (1/(L*Co))*(R/Ro+(1-do)^2);
+
+G2_t = Kb*(s*z + 1)/(a2*s^2 + a1*s + 1)
 
 
 %%

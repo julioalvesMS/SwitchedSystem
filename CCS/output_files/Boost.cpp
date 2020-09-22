@@ -61,10 +61,10 @@ namespace ConverterBoost
             //
             // Boost Converter - Rule 1
             //
-            P[0][0] = 0.001505080018;
-            P[0][1] = 0.0005297029297;
-            P[1][0] = 0.0005297029297;
-            P[1][1] = 0.002264849911;
+            P[0][0] = 0.001504793519;
+            P[0][1] = 0.0005378504719;
+            P[1][0] = 0.0005378504719;
+            P[1][1] = 0.002282059286;
             break;
 
         case CS_CONTINUOUS_THEOREM_2:
@@ -81,10 +81,10 @@ namespace ConverterBoost
             //
             // Boost Converter - Discrete Rule 1
             //
-            P[0][0] = 5.932438395e-07;
-            P[0][1] = 3.159763018e-07;
-            P[1][0] = 3.159763018e-07;
-            P[1][1] = 1.686928764e-06;
+            P[0][0] = 1.789979851;
+            P[0][1] = 0.855292969;
+            P[1][0] = 0.855292969;
+            P[1][1] = 2.721271193;
             break;
 
         default:
@@ -124,13 +124,13 @@ namespace ConverterBoost
 
     void Boost::GetStateFeedbackH2Controller(double K[2], double C[2], double* M)
     {
-        K[0] = 1.200606059;
-        K[1] = 0.6518776693;
+        K[0] = 1.219076922;
+        K[1] = 0.6619065564;
 
         C[0] = 1.8;
         C[1] = 1;
 
-        (*M) = 0.6671040097;
+        (*M) = 0.6773671482;
     }
 
 
@@ -155,8 +155,8 @@ namespace ConverterBoost
             //
             // Boost Converter - Continuous
             //
-            num[0] = 0.5;
-            num[1] = -0.475;
+            num[0] = 1.5;
+            num[1] = -1.4;
 
             den[0] = 1;
             den[1] = -1;
@@ -166,8 +166,8 @@ namespace ConverterBoost
             //
             // Boost Converter - Discrete
             //
-            num[0] = 0.5;
-            num[1] = -0.475;
+            num[0] = 1.5;
+            num[1] = -1.4;
 
             den[0] = 1;
             den[1] = -1;
@@ -375,22 +375,22 @@ namespace ConverterBoost
         //
         // Cycle Step 1 -- Matrix P
         //
-        step->P[0][0] = 60.44296673;
-        step->P[0][1] = 17.22845641;
-        step->P[1][0] = 17.22845641;
-        step->P[1][1] = 83.51212509;
+        step->P[0][0] = 60.44292741;
+        step->P[0][1] = 17.22845736;
+        step->P[1][0] = 17.22845736;
+        step->P[1][1] = 83.51212507;
         //
         // Cycle Step 1 -- Vector Xe
         //
-        step->Xe[0] = 1.105865135;
-        step->Xe[1] = 97.88893633;
+        step->Xe[0] = 1.089109602;
+        step->Xe[1] = 96.40577063;
         //
         // Cycle Step 1 -- Matrix ell
         //
-        step->ell[0][0] = 0;
-        step->ell[0][1] = -1.421085472e-14;
-        step->ell[1][0] = -1.231532914;
-        step->ell[1][1] = 0.01001771342;
+        step->ell[0][0] = -4.440892099e-16;
+        step->ell[0][1] = 0;
+        step->ell[1][0] = -1.212873324;
+        step->ell[1][1] = 0.009865929884;
 
         //
         // =============== Limit Cycle Step 2 ===============
@@ -400,22 +400,22 @@ namespace ConverterBoost
         //
         // Cycle Step 2 -- Matrix P
         //
-        step->P[0][0] = 60.69902055;
-        step->P[0][1] = 17.33730384;
-        step->P[1][0] = 17.33730384;
-        step->P[1][1] = 83.22129826;
+        step->P[0][0] = 60.69898123;
+        step->P[0][1] = 17.3373051;
+        step->P[1][0] = 17.3373051;
+        step->P[1][1] = 83.22129821;
         //
         // Cycle Step 2 -- Vector Xe
         //
-        step->Xe[0] = 1.929390556;
-        step->Xe[1] = 97.87770087;
+        step->Xe[0] = 1.900157366;
+        step->Xe[1] = 96.39470541;
         //
         // Cycle Step 2 -- Matrix ell
         //
-        step->ell[0][0] = 1.23144907;
-        step->ell[0][1] = -0.01913981141;
+        step->ell[0][0] = 1.21279075;
+        step->ell[0][1] = -0.01884981427;
         step->ell[1][0] = -1.110223025e-16;
-        step->ell[1][1] = 2.938621568e-15;
+        step->ell[1][1] = 3.540570614e-15;
 
         //
         // =============== Limit Cycle Step 3 ===============
@@ -425,22 +425,22 @@ namespace ConverterBoost
         //
         // Cycle Step 3 -- Matrix P
         //
-        step->P[0][0] = 60.57118068;
-        step->P[0][1] = 17.28466737;
-        step->P[1][0] = 17.28466737;
-        step->P[1][1] = 83.36738191;
+        step->P[0][0] = 60.57114135;
+        step->P[0][1] = 17.28466846;
+        step->P[1][0] = 17.28466846;
+        step->P[1][1] = 83.36738186;
         //
         // Cycle Step 3 -- Vector Xe
         //
-        step->Xe[0] = 1.516390149;
-        step->Xe[1] = 97.88560651;
+        step->Xe[0] = 1.493414541;
+        step->Xe[1] = 96.40249126;
         //
         // Cycle Step 3 -- Matrix ell
         //
-        step->ell[0][0] = 1.231519687;
-        step->ell[0][1] = -0.01456489371;
-        step->ell[1][0] = 1.110223025e-16;
-        step->ell[1][1] = 2.938621568e-15;
+        step->ell[0][0] = 1.212860298;
+        step->ell[0][1] = -0.01434421351;
+        step->ell[1][0] = 2.220446049e-16;
+        step->ell[1][1] = 3.540570614e-15;
 
     }
 
@@ -460,22 +460,22 @@ namespace ConverterBoost
         //
         // Cycle Step 1 -- Matrix P
         //
-        step->P[0][0] = 6.519021402e+17;
-        step->P[0][1] = 2.240819605e+17;
-        step->P[1][0] = 2.240819605e+17;
-        step->P[1][1] = 8.076803411e+17;
+        step->P[0][0] = 2.493070291e+10;
+        step->P[0][1] = 8219851488;
+        step->P[1][0] = 8219851488;
+        step->P[1][1] = 3.070742875e+10;
         //
         // Cycle Step 1 -- Vector Xe
         //
-        step->Xe[0] = 1.516390149;
-        step->Xe[1] = 97.88560651;
+        step->Xe[0] = 1.493414541;
+        step->Xe[1] = 96.40249126;
         //
         // Cycle Step 1 -- Matrix ell
         //
-        step->ell[0][0] = 1.231519687;
-        step->ell[0][1] = -0.01456489371;
-        step->ell[1][0] = 3.330669074e-16;
-        step->ell[1][1] = 1.714947628e-14;
+        step->ell[0][0] = 1.212860298;
+        step->ell[0][1] = -0.01434421351;
+        step->ell[1][0] = 1.110223025e-16;
+        step->ell[1][1] = -1.06702841e-14;
 
         //
         // =============== Limit Cycle Step 2 ===============
@@ -485,22 +485,22 @@ namespace ConverterBoost
         //
         // Cycle Step 2 -- Matrix P
         //
-        step->P[0][0] = 6.502821391e+17;
-        step->P[0][1] = 2.238245071e+17;
-        step->P[1][0] = 2.238245071e+17;
-        step->P[1][1] = 8.095747415e+17;
+        step->P[0][0] = 2.487068951e+10;
+        step->P[0][1] = 8210441381;
+        step->P[1][0] = 8210441381;
+        step->P[1][1] = 3.077638651e+10;
         //
         // Cycle Step 2 -- Vector Xe
         //
-        step->Xe[0] = 1.105865135;
-        step->Xe[1] = 97.88893633;
+        step->Xe[0] = 1.089109602;
+        step->Xe[1] = 96.40577063;
         //
         // Cycle Step 2 -- Matrix ell
         //
         step->ell[0][0] = 4.440892099e-16;
-        step->ell[0][1] = 0;
-        step->ell[1][0] = -1.231532914;
-        step->ell[1][1] = 0.01001771342;
+        step->ell[0][1] = 1.421085472e-14;
+        step->ell[1][0] = -1.212873324;
+        step->ell[1][1] = 0.009865929884;
 
         //
         // =============== Limit Cycle Step 3 ===============
@@ -510,22 +510,22 @@ namespace ConverterBoost
         //
         // Cycle Step 3 -- Matrix P
         //
-        step->P[0][0] = 6.536021702e+17;
-        step->P[0][1] = 2.243226981e+17;
-        step->P[1][0] = 2.243226981e+17;
-        step->P[1][1] = 8.058042938e+17;
+        step->P[0][0] = 2.499246671e+10;
+        step->P[0][1] = 8228153403;
+        step->P[1][0] = 8228153403;
+        step->P[1][1] = 3.063807903e+10;
         //
         // Cycle Step 3 -- Vector Xe
         //
-        step->Xe[0] = 1.929390556;
-        step->Xe[1] = 97.87770087;
+        step->Xe[0] = 1.900157366;
+        step->Xe[1] = 96.39470541;
         //
         // Cycle Step 3 -- Matrix ell
         //
-        step->ell[0][0] = 1.23144907;
-        step->ell[0][1] = -0.01913981141;
+        step->ell[0][0] = 1.21279075;
+        step->ell[0][1] = -0.01884981427;
         step->ell[1][0] = 0;
-        step->ell[1][1] = -1.127223315e-14;
+        step->ell[1][1] = 3.540570614e-15;
 
     }
 
@@ -553,15 +553,15 @@ namespace ConverterBoost
         //
         // Cycle Step 1 -- Vector Xe
         //
-        step->Xe[0] = 1.929390556;
-        step->Xe[1] = 97.87770087;
+        step->Xe[0] = 1.900157366;
+        step->Xe[1] = 96.39470541;
         //
         // Cycle Step 1 -- Matrix ell
         //
-        step->ell[0][0] = 1.23144907;
-        step->ell[0][1] = -0.01913981141;
-        step->ell[1][0] = 2.220446049e-16;
-        step->ell[1][1] = 2.938621568e-15;
+        step->ell[0][0] = 1.21279075;
+        step->ell[0][1] = -0.01884981427;
+        step->ell[1][0] = -2.220446049e-16;
+        step->ell[1][1] = 3.540570614e-15;
 
         //
         // =============== Limit Cycle Step 2 ===============
@@ -578,15 +578,15 @@ namespace ConverterBoost
         //
         // Cycle Step 2 -- Vector Xe
         //
-        step->Xe[0] = 1.516390149;
-        step->Xe[1] = 97.88560651;
+        step->Xe[0] = 1.493414541;
+        step->Xe[1] = 96.40249126;
         //
         // Cycle Step 2 -- Matrix ell
         //
-        step->ell[0][0] = 1.231519687;
-        step->ell[0][1] = -0.01456489371;
-        step->ell[1][0] = 5.551115123e-16;
-        step->ell[1][1] = -1.127223315e-14;
+        step->ell[0][0] = 1.212860298;
+        step->ell[0][1] = -0.01434421351;
+        step->ell[1][0] = 3.330669074e-16;
+        step->ell[1][1] = -1.06702841e-14;
 
         //
         // =============== Limit Cycle Step 3 ===============
@@ -603,15 +603,15 @@ namespace ConverterBoost
         //
         // Cycle Step 3 -- Vector Xe
         //
-        step->Xe[0] = 1.105865135;
-        step->Xe[1] = 97.88893633;
+        step->Xe[0] = 1.089109602;
+        step->Xe[1] = 96.40577063;
         //
         // Cycle Step 3 -- Matrix ell
         //
         step->ell[0][0] = 0;
         step->ell[0][1] = 0;
-        step->ell[1][0] = -1.231532914;
-        step->ell[1][1] = 0.01001771342;
+        step->ell[1][0] = -1.212873324;
+        step->ell[1][1] = 0.009865929884;
 
     }
 

@@ -48,8 +48,8 @@ config_buck_boost.template = fullfile(converter_template_folder, 'buck_boost.cpp
 config_buck_boost_3_stage.circuit = circuit_buck_boost_3_stage;
 config_buck_boost_3_stage.template = fullfile(converter_template_folder, 'buck_boost_3.cpp');
 
-config_converters = {config_buck, config_boost, config_buck_boost, config_buck_boost_3_stage};
-% config_converters = {config_buck_boost};
+% config_converters = {config_buck, config_boost, config_buck_boost, config_buck_boost_3_stage};
+config_converters = {config_buck_boost};
 
 %%
 
@@ -66,15 +66,16 @@ try
 
         run load_circuit_sys
 
-        range = circuit.operation_range_voltage_min:1:circuit.operation_range_voltage_max;
+        range = circuit.operation_range_voltage_min:5:circuit.operation_range_voltage_max;
         lambdas = generate_lambda_voltage(sys, range);
+        dlambdas = generate_lambda_voltage(dsys, range);
 
         % Calculate the P matrix, as the equilibrium point. Calculation will be
         % in accordance with the chosen control theorem
 
         [Pc1] = calc_sys_theorem_1_range(sys, lambdas);
         [Pc2] = calc_sys_theorem_2(sys);
-        [Pd1, dsys] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
+        [Pd1, gamma] = calc_sys_discrete_theorem_1_test_1(sys, dsys, dlambdas);
 
         
         Vref = circuit.limit_cycle_voltage;

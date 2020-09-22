@@ -26,12 +26,12 @@ classdef buck_boost
         pwm_pid_vc_cp = 0.0203;
         pwm_pid_vc_ci = 4.77;
         
-        reference_pid_kp = 1;
-        reference_pid_ki = 15.3;
+        reference_pid_kp = 1.5;
+        reference_pid_ki = 100;
         
         current_correction_gain = 0.8;
         
-        operation_range_voltage_min = 0;
+        operation_range_voltage_min = 5;
         operation_range_voltage_max = 120;
     end
     

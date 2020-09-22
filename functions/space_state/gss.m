@@ -10,4 +10,5 @@ function sys = gss(A, B, C, D, Q, E, G, H)
     sys.H = H;
     
     sys.N = length(A);
+    sys.discrete = false;
 end

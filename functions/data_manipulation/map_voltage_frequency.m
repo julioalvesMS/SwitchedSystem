@@ -10,8 +10,8 @@ function [F,FV] = map_voltage_frequency(Vref,Freq,Tref)
     FV = [];
     
     for t=0.99:Tref:max(Freq.Time)
-        data = getsampleusingtime(Freq, t-dt, t+dt);
-        Rdata = getsampleusingtime(Vref, t-dt, t+dt);
+        data = getsampleusingtime(Freq, t-Tref*0.2, t+dt);
+        Rdata = getsampleusingtime(Vref, t-Tref*0.2, t+dt);
 
         F(end+1) = mean(data.Data);
         FV(end+1) = mean(Rdata.Data);

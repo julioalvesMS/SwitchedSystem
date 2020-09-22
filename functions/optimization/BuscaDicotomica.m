@@ -33,10 +33,10 @@ function [y,x,k,data] = BuscaDicotomica(fnc, inferior, superior, precisao)
         
         if fl < fm
             superior = mi;
-        elseif fl > fm
+        elseif fl > fm || (fl==fm && fl==inf)
             inferior = lambda;
         else
-            x = (mi+lambda)/2;
+            x = meio;
             superior = x;
             inferior = x;
         end

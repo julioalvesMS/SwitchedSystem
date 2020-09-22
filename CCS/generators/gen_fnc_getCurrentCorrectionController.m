@@ -1,10 +1,10 @@
 function [str] = gen_fnc_getCurrentCorrectionController(circuit, T)
     
     s = tf('s');
-    CC = 0.5 + 25/s;
+    CC = 1.5 + 100  /s;
     CCd = c2d(CC, T);
     
-    DC = 0.5 + 25/s;
+    DC = 1.5 + 100/s;
     DCd = c2d(DC, T);
     
     [Cnum, Cden] = tfdata(CCd, 'v');

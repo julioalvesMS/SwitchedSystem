@@ -30,6 +30,8 @@ image_folder = strcat(root_image_folder, '/Article');
 [~,~]=mkdir(image_folder);
 image_folder = strcat(image_folder, '/');
 
+root_data_mat_folder = 'data_mat';
+
 %% System Specifications
 
 run system_specifications
@@ -69,10 +71,10 @@ default_config.disturbance_Vin_time = disturbance_Vin_time;
 default_config.disturbance_Ro_time = disturbance_Ro_time;
 default_config.opt_variable_load = false;
 default_config.opt_dead_time = true;
-default_config.opt_mode_hopping = true;
+default_config.opt_mode_hopping = false;
 default_config.opt_sensor_noises = false;
 default_config.switching_period = 1/40e3;
-default_config.simulation_sample = Ti;
+default_config.simulation_sample = 1e-7;
 default_config.circuit = circuit_buck_boost;
 default_config.test_voltages = circuit_buck_boost.single_voltage;
 default_config.simulation_duration = 0.15;
@@ -81,6 +83,7 @@ default_config.opt_measurement_efficiency = false;
 default_config.opt_measurement_clock = false;
 default_config.image_folder = image_folder;
 
+opt_theorem_discrete = 3;
 
 %% Run - Frequency Test - Ideal 1MHz - Continuous Controller 1
 
@@ -122,6 +125,7 @@ saveVars.continuous_2_frequency_ideal_1M = new_sim;
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.opt_measurement_frequency = true;
 new_sim.opt_measurement_ripple = true;
 new_sim.opt_measurement_error = true;
@@ -146,7 +150,7 @@ new_sim.opt_measurement_error = true;
 new_sim.opt_constant_reference = false;
 new_sim.opt_dead_time = false;
 new_sim.switching_period = 1/200e3;
-new_sim.simulation_sample = 5e-7;
+new_sim.simulation_sample = 1e-7;
 new_sim.simulation_duration = 12.5;
 
 config_simulations{end+1} = new_sim;
@@ -164,7 +168,7 @@ new_sim.opt_constant_reference = false;
 new_sim.variable_reference_step_period = 0.5;
 new_sim.opt_dead_time = false;
 new_sim.switching_period = 1/200e3;
-new_sim.simulation_sample = 5e-7;
+new_sim.simulation_sample = 1e-7;
 new_sim.simulation_duration = 12.5;
 
 config_simulations{end+1} = new_sim;
@@ -176,13 +180,14 @@ saveVars.continuous_2_frequency_ideal_200 = new_sim;
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.opt_measurement_frequency = true;
 new_sim.opt_measurement_ripple = true;
 new_sim.opt_measurement_error = true;
 new_sim.opt_constant_reference = false;
 new_sim.opt_dead_time = false;
 new_sim.switching_period = 1/200e3;
-new_sim.simulation_sample = 5e-7;
+new_sim.simulation_sample = 1e-7;
 new_sim.simulation_duration = 12.5;
 
 config_simulations{end+1} = new_sim;
@@ -228,6 +233,7 @@ saveVars.continuous_2_frequency_ideal_40 = new_sim;
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.opt_measurement_frequency = true;
 new_sim.opt_measurement_ripple = true;
 new_sim.opt_measurement_error = true;
@@ -280,6 +286,7 @@ saveVars.continuous_2_frequency_ideal_PI_40 = new_sim;
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.opt_current_correction = true;
 new_sim.opt_measurement_frequency = true;
 new_sim.opt_measurement_ripple = true;
@@ -329,6 +336,7 @@ saveVars.continuous_2_frequency_real_PI = new_sim;
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.opt_current_correction = true;
 new_sim.opt_measurement_frequency = true;
 new_sim.opt_measurement_ripple = true;
@@ -386,6 +394,7 @@ saveVars.continuous_2_load_step = new_sim;
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.opt_current_correction = true;
 new_sim.disturbance_Ro_enable = true;
 new_sim.disturbance_Ro_time = 2;
@@ -396,7 +405,7 @@ config_simulations{end+1} = new_sim;
 discrete_load_step = new_sim;
 saveVars.discrete_load_step = new_sim;
 
-%% Run 8 - Reference Step - Continuous Controller 1
+%% Run - Reference Step - Continuous Controller 1
 
 new_sim = copy(default_config);
 new_sim.opt_theorem = 1;
@@ -407,7 +416,7 @@ config_simulations{end+1} = new_sim;
 continuous_1_reference_step = new_sim;
 saveVars.continuous_1_reference_step = new_sim;
 
-%% Run 8 - Reference Step - Continuous Controller 2
+%% Run - Reference Step - Continuous Controller 2
 
 new_sim = copy(default_config);
 new_sim.test_voltages = new_sim.circuit.single_voltage;
@@ -418,10 +427,11 @@ continuous_2_reference_step = new_sim;
 saveVars.continuous_2_reference_step = new_sim;
 
 
-%% Run 9 - Reference Step - Discrete Controller
+%% Run - Reference Step - Discrete Controller
 
 new_sim = copy(default_config);
 new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
 new_sim.test_voltages = new_sim.circuit.single_voltage;
 new_sim.simulation_duration = 1;
 
@@ -430,7 +440,7 @@ discrete_reference_step = new_sim;
 saveVars.discrete_reference_step = new_sim;
 
 
-%% Run 10 - Reference Step - Classic Controller
+%% Run - Reference Step - Classic Controller
 
 new_sim = copy(default_config);
 new_sim.opt_pwm = true;
@@ -455,6 +465,92 @@ new_sim.simulation_duration = 12.5;
 config_simulations{end+1} = new_sim;
 classic_ripple = new_sim;
 saveVars.classic_ripple = new_sim;
+
+%% Run - Step Analysis - Continuous Controller 1
+
+new_sim = copy(default_config);
+new_sim.opt_theorem = 1;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 0.5;
+
+config_simulations{end+1} = new_sim;
+continuous_1_step_analysis = new_sim;
+saveVars.continuous_1_step_analysis = new_sim;
+
+%% Run - Step Analysis - Continuous Controller 2
+
+new_sim = copy(default_config);
+new_sim.opt_theorem = 2;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 1;
+
+config_simulations{end+1} = new_sim;
+continuous_2_step_analysis = new_sim;
+saveVars.continuous_2_step_analysis = new_sim;
+
+
+%% Run - Step Analysis - Discrete Controller
+
+new_sim = copy(default_config);
+new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 0.5;
+
+config_simulations{end+1} = new_sim;
+discrete_step_analysis = new_sim;
+saveVars.discrete_step_analysis = new_sim;
+
+
+%% Run - Step Analysis - Classic Controller
+
+new_sim = copy(default_config);
+new_sim.opt_pwm = true;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 0.5;
+
+config_simulations{end+1} = new_sim;
+classic_step_analysis = new_sim;
+saveVars.classic_step_analysis = new_sim;
+
+
+%% Run - Step Analysis - Continuous Controller 1 - Single Design
+
+new_sim = copy(default_config);
+new_sim.opt_theorem = 1;
+new_sim.opt_range_design = false;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 0.5;
+
+config_simulations{end+1} = new_sim;
+continuous_1_step_analysis_single = new_sim;
+saveVars.continuous_1_step_analysis_single = new_sim;
+
+%% Run - Step Analysis - Continuous Controller 2 - Single Design
+
+new_sim = copy(default_config);
+new_sim.opt_theorem = 2;
+new_sim.opt_range_design = false;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 1;
+
+config_simulations{end+1} = new_sim;
+continuous_2_step_analysis_single = new_sim;
+saveVars.continuous_2_step_analysis_single = new_sim;
+
+
+%% Run - Step Analysis - Discrete Controller - Single Design
+
+new_sim = copy(default_config);
+new_sim.opt_discrete = true;
+new_sim.opt_theorem = opt_theorem_discrete;
+new_sim.opt_range_design = false;
+new_sim.test_voltages = new_sim.circuit.operation_range_voltage_min:5:new_sim.circuit.operation_range_voltage_max;
+new_sim.simulation_duration = 0.5;
+
+config_simulations{end+1} = new_sim;
+discrete_step_analysis_single = new_sim;
+saveVars.discrete_step_analysis_single = new_sim;
 
 
 %% RUN EVERYTHING !!!!!!!
@@ -548,10 +644,10 @@ close(main_bar);
 
 %% End of simulations
 
-file = 'all_simulations_article_2.mat';
+file = fullfile(root_data_mat_folder, 'all_simulations_article.mat');
 
 if isfile(file)
-    save(file, '-struct', 'saveVars', '-append')
+    save(file, '-struct', 'saveVars')
 else
     save(file, '-struct', 'saveVars')
 end

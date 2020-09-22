@@ -26,6 +26,5 @@ function lambdas = generate_lambda_voltage(sys, voltages)
             lambdas(i,:) = [1-lamb lamb];
         end
     end
-
 end
 

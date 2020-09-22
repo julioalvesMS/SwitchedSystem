@@ -38,7 +38,7 @@ opt_model = 2;
 % Options:
 %   0 - Continuous Controller
 %   1 - Discrete Controller
-opt_discrete = true;
+opt_discrete = false;
 
 % Desired Theorem to use
 % Theorems defines
@@ -74,13 +74,13 @@ opt_update_equilibrium = true;
 % Options
 %   0 - Don't use the PI
 %   1 - Update the voltage from the equilibrium point using a PI controller
-opt_equilibrium_controller = false;
+opt_equilibrium_controller = true;
 
 % Use a PI to correct the equilibrium current estimation
 % Options
 %   0 - Don't use the PI
 %   1 - Correct the current from the equilibrium point using a PI controller
-opt_current_correction = true;
+opt_current_correction = false;
 
 % Run with knowledge of only the equilibrium voltage.
 % Uses a filter to estimate the equilibrium current.
@@ -118,7 +118,7 @@ opt_dead_time = true;
 % Options
 %   0 - Consider ideal switches
 %   1 - Consider dead time
-opt_mode_hopping = true;
+opt_mode_hopping = false;
 
 % Simulate the dead time observed in real life switches
 % Options
@@ -137,9 +137,9 @@ circuit = buck_boost(R, Ro, Co, L);
 
 %test_voltages = circuit.test_voltages;
 test_voltages = circuit.single_voltage;
-% test_voltages = 5;
+% test_voltages = 10:30:circuit.operation_range_voltage_max;;
 
-% test_voltages = [190];
+% test_voltages = 5:5:220;
 
 mu = -1;
 
@@ -154,10 +154,11 @@ simulation_duration = 3;
 
 opt_measurement_frequency = false;
 opt_measurement_efficiency = false;
-opt_measurement_ripple = false;
+opt_measurement_ripple = true;
 opt_measurement_clock = false;
-opt_measurement_error = false;
+opt_measurement_error = true;
 
+opt_show_load_bar = true;
 
 %% Prepare Data
 
@@ -199,28 +200,39 @@ switch(opt_model)
 end
 
 % Number of simulations to run
-Ns = size(test_voltages, 1);
+Ns = size(test_voltages, 2);
 
-bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
+if opt_show_load_bar
+    bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
+end
 
 try
     load_system(model);
     
     run comment_simulink
-
-%     for i=Ns:-1:1
-    for i=4
+    for i=Ns:-1:1
+%     for i=2
         
-        Vref = test_voltages(1);
+        if i>length(test_voltages)
+            Vref = test_voltages(end);
+        else
+            Vref = test_voltages(i);
+        end
         
         if opt_range_design == 0
-            lambdas = generate_lambda_voltage(sys, circuit.limit_cycle_voltage);
+            lambdas = generate_lambda_voltage(sys, Vref);
         else
-            range = circuit.operation_range_voltage_min:1:circuit.operation_range_voltage_max;
-            lambdas = generate_lambda_voltage(sys, range);
+            range = 5:5:circuit.operation_range_voltage_max;
+%             range = 5:5:120;
+%             range = 10
+            if opt_discrete
+                lambdas = generate_lambda_voltage(dsys, range);
+            else
+                lambdas = generate_lambda_voltage(sys, range);
+            end
         end
-
-        xe = calculate_equilibrium_point(circuit, Vs, circuit.limit_cycle_voltage);
+        
+        xe = calculate_equilibrium_point(circuit, Vs, Vref);
         
         % Calculate the P matrix, as the equilibrium point. Calculation will be
         % in accordance with the chosen control theorem
@@ -228,13 +240,24 @@ try
             switch(opt_theorem)
                 case 1
                     P = calc_sys_theorem_1_range(sys, lambdas);
+                    P = 1e-2*[1.4922 0.8171; 0.8171 3.0502];
                 case 2
                     P = calc_sys_theorem_2(sys);
+                    P = 1e-3*[2.3103 0.1166; 0.1166 3.4610];
             end
         else
-            [P, dsys] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
+            switch(opt_theorem)
+                case 1
+                    [P, W] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
+                case 2
+                    [P, W] = calc_sys_discrete_theorem_1_test_W(sys, dsys, lambdas);
+                case 3
+                    [P, gamma] = calc_sys_discrete_theorem_1_test_1(sys, dsys, lambdas);
+%                     P = [0.8372 0.4200; 0.4200 1.3553];
+            end
         end
 
+        
         % Convert the truct used to represent the space state to double, so it
         % can be used in the simulink
         [A, B, C, D, Q] = gss2double(sys);          % Continuos
@@ -249,9 +272,10 @@ try
             SystemDataBus = create_bus_DiscreteSystemDataBus(Ad, Bd, P, Qd, sys.N, Ld);
         end
             
-
         % Update wait bar
-        waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));
+        if opt_show_load_bar
+            waitbar((Ns-i)/Ns, bar, sprintf('Simulation %i of %d',Ns-i+1, Ns));
+        end
 
         % Run simulation
         tic
@@ -276,11 +300,15 @@ try
     uncomment_blocks(model)
     
 catch exception
-    close(bar);
+    if opt_show_load_bar
+        close(bar);
+    end
     rethrow(exception);
 end
-close(bar);
-    plot_disturbance_voltage_time(sim_out, disturbance_Ro_time, circuit.name, image_folder);
+
+if opt_show_load_bar
+    close(bar);
+end
 
 %% Analysis
 
@@ -298,52 +326,65 @@ if disturbance_Vin_enable == 1
     plot_disturbance_voltage_time(sim_out, disturbance_Vin_time, circuit.name, image_folder);
 end
 
+%%
+
+if opt_discrete
+    lambda = generate_lambda_voltage(sys, Vref);
+    [Al, Bl] = calc_sys_lambda(dsys, lambda);
+    xer = -(Al-eye(2))\Bl*dsys.U;
+    [h,cr] = calc_sys_discrete_h(dsys, lambda, P, xer, Vs);
+    hv = -P^(-1)*h;
+    rp = 1;
+
+    [rs,betas] = max_V(W,P,h);
+
+    n=sys.N;
+
+    switch(opt_theorem)
+        case 1
+            Vw = (pi^(n/2)/(gamma((n/2)+1)))/sqrt(det(W/cr))
+            Vp = (pi^(n/2)/(gamma((n/2)+1)))/sqrt(det(P))
+            [xv,yv] = plot_ellipse(P,hv,rs);    % (xi-hv)'P(xi-hv)<rp
+            [xa,ya] = plot_ellipse(W,[0;0],1);    % xi'Wxi<rp
+        case 2
+            Vw = (pi^(n/2)/(gamma((n/2)+1)))/sqrt(det(W))
+            Vp = (pi^(n/2)/(gamma((n/2)+1)))/sqrt(det(P/rs))
+            [xv,yv] = plot_ellipse(P,hv,rs);    % (xi-hv)'P(xi-hv)<rp
+            [xa,ya] = plot_ellipse(W,[0;0],1);    % xi'Wxi<rp
+        case 3
+            [xv,yv] = plot_ellipse(P,hv,rs);    % (xi-hv)'P(xi-hv)<rp
+            [xa,ya] = plot_ellipse(W,[0;0],1);    % xi'Wxi<rp
+
+    end
+
+    figure
+    hold all
+    plot(xv,yv)
+    plot(xa,ya)
+    clear xi
+    for i=1:Ns
+        xi(:,1)=sim_out(i).IL.Data(1:end) - sim_out(i).xe.Data(1:end,1);
+        xi(:,2)=sim_out(i).Vout.Data(1:end) - sim_out(i).xe.Data(1:end,2);
+        plot(xi(:,1), xi(:,2))
+    end
+end
+
+%%
+
+clear Ref Err;
+for i=Ns:-1:1
+    Verr = sim_out(i).Verr;
+    Vref = sim_out(i).Vref;
+    Err(i) = Verr.Data(end);
+    Ref(i) = Vref.Data(end);
+end
+
+figure
+plot(Ref, Err)
+
 %% Fim do script
 
 if sim_out(1).Eff.Data
     sim_out(1).Eff.Data(end)
 end
 return
-%%
-close all
-
-EXP_CONV = Buck_PWM;
-plot_voltage_time(sim_out, circuit.name, image_folder);
-hold on
-plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.Vof - 0.38)
-
-plot_current_time(sim_out, circuit.name, image_folder);
-hold on
-plot(EXP_CONV.t*1e3 - 0.4, EXP_CONV.IL + 0.3667)
-
-%%
-close all
-load('matlab4_bb.mat')
-
-figure
-hold all
-plot(th_2_dis_FV, th_2_dis_F/1e3, '+-black')
-plot(th_2_dis_dd_FV, th_2_dis_dd_F/1e3, '+-r')
-hold off
-legend('Ideal switches', 'Switches with Dead-Time')
-%set(legend, 'Position',[0.345238102475802 0.866269843540494 0.333928564190865 0.0869047596341088]);
-ylabel('Switching frequency [kHz]')
-xlabel('Output voltage [V]')
-%set(gcf, 'Position',  [100, 100, 1600, 780])
-set(gcf,'renderer','Painters')
-saveas(gcf, strcat(image_folder, 'frequency_simulation_discrete_controller'), 'epsc');
-
-figure
-hold all
-plot(th_2_con_FV, th_2_con_F/1e3, '+-black')
-plot(th_2_con_dd_FV, th_2_con_dd_F/1e3, '+-r')
-hold off
-legend('Ideal switches', 'Switches with Dead-Time')
-%set(legend, 'Position',[0.345238102475802 0.866269843540494 0.333928564190865 0.0869047596341088]);
-ylabel('Switching frequency [kHz]')
-xlabel('Output voltage [V]')
-%set(gcf, 'Position',  [100, 100, 1600, 780])
-set(gcf,'renderer','Painters')
-saveas(gcf, strcat(image_folder, 'frequency_simulation_continuous_controller'), 'epsc');
-
-

@@ -11,6 +11,7 @@ Tref = 1e-3;
 current_correction_start = 0.2;
 
 reference_start_time = 0.005;
+reference_start_time = 0;
 
 % Circuit specifications
 Ro = 96.8; % [Ohm] - Load Resistance
@@ -22,7 +23,7 @@ L  = 1.981e-3; % [H] - Converter Indutance
 tau = Ro*Co;
 
 % Input voltage
-Vs = 66; % [V]
+Vs = 65; % [V]
 
 % System starts discharged
 x0 = [0; 0];

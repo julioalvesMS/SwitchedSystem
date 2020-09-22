@@ -3,7 +3,7 @@ function [test_lambdas,equilibrium] = generate_sample_points(sys)
 %   Detailed explanation goes here
 
     % Sample points
-    test_lambdas = generate_lambda_2d(0.001);
+    test_lambdas = generate_lambda_2d(0.0001);
     
     Nl = size(test_lambdas, 1);
     
@@ -16,8 +16,11 @@ function [test_lambdas,equilibrium] = generate_sample_points(sys)
     % Calculate the equilibrium point for each lambda sample
     for i=Nl:-1:1
         [Al, Bl, ~] = calc_sys_lambda(sys, lambdas(i,:));
-        xe = -Al\Bl*sys.U;
-
+        if sys.discrete
+            xe = -(Al-eye(2))\Bl*sys.U;
+        else
+            xe = -Al\Bl*sys.U;
+        end
         equilibrium(i,:) = xe;
     end
 end

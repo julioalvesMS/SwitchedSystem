@@ -37,7 +37,7 @@ switch(opt_model)
 end
 
 % Number of simulations to run
-Ns = size(test_voltages, 1);
+Ns = length(test_voltages);
 
 bar = waitbar(0, 'Preparing simulation', 'name', 'Simulating');
 
@@ -53,9 +53,9 @@ try
         Vref = test_voltages(i);
         
         if opt_range_design == 0
-            lambdas = generate_lambda_voltage(sys, circuit.limit_cycle_voltage);
+            lambdas = generate_lambda_voltage(sys, circuit.single_voltage);
         else
-            range = circuit.operation_range_voltage_min:1:circuit.operation_range_voltage_max;
+            range = circuit.operation_range_voltage_min:5:circuit.operation_range_voltage_max;
             lambdas = generate_lambda_voltage(sys, range);
         end
 
@@ -71,7 +71,14 @@ try
                     P = calc_sys_theorem_2(sys);
             end
         else
-            [P, dsys] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
+            switch(opt_theorem)
+                case 1
+                    [P, W] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas);
+                case 2
+                    [P, W] = calc_sys_discrete_theorem_1_test_W(sys, dsys, lambdas);
+                case 3
+                    [P, gamma] = calc_sys_discrete_theorem_1_test_1(sys, dsys, lambdas);
+            end
         end
 
         % Convert the truct used to represent the space state to double, so it

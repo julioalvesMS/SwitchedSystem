@@ -1,35 +1,38 @@
-function [P, dsys] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas)
+function [P, W] = calc_sys_discrete_theorem_1_range(sys, dsys, lambdas)
 %CALC_SYS_CHAINED_1 Calculate de desired mean system using lambda
 %   Calculate de desigred mean system from the switched system
 %   Returns the system, P matrix and the equilibrium points
     
-    I = eye(length(dsys.A{1}));
-    
     fnc = @(beta) (calc_volume(sys, dsys, lambdas, beta));
 
-    [~,beta] = BuscaDicotomica(fnc, 0, 1e7, 1e7);
+    [~,beta] = BuscaDicotomica(fnc, 1, 1e5, 1e7);
 
-    P = frank_wolfe(sys, dsys, lambdas, beta);
+    [P,W] = frank_wolfe(sys, dsys, lambdas, beta);
     
-    for i=1:dsys.N
-        dsys.L{i} = [(dsys.A{i}-I)  dsys.B{i}];
-    end
 end
 
 function V = calc_volume(sys, dsys, lambdas, beta)
-    [P,W] = frank_wolfe(sys, dsys, lambdas, beta);
-    
-    V = -trace(W\P);
+    try
+        [P,~] = frank_wolfe(sys, dsys, lambdas, beta);
+    %     V = -trace(W\P);
+        V = -log(det(P));
+        if V < 0
+            V = inf;
+        end
+    catch
+        V = inf;
+    end
 end
 
 function [P, W] = frank_wolfe(sys, dsys, lambdas, beta)
     
     E = 1e-3;
     I = eye(length(dsys.A{1}));
-    P = I;
+    
+    [P,W] = solve_R_lmi(sys, dsys, lambdas, beta, I);
     
     for i=1:100
-        [R,W] = solve_R_lmi(sys, dsys, lambdas, beta, P);
+        [R,S] = solve_R_lmi(sys, dsys, lambdas, beta, P);
 
         if abs(trace(P\(R-P))) < E
             break;
@@ -40,6 +43,7 @@ function [P, W] = frank_wolfe(sys, dsys, lambdas, beta)
         [~,alpha] = BuscaDicotomica(fnc, 0, 1, 1e20);
 
         P = alpha*R+(1-alpha)*P;
+        W = alpha*S+(1-alpha)*W;
     end
 end
 
@@ -56,7 +60,7 @@ function [Rs,Ws] = solve_R_lmi(sys, dsys, lambdas, beta, Ps)
     P = lmivar(1,[nx 1]);
     W = lmivar(1,[nx 1]);
     
-    for k=size(lambdas, 1)
+    for k=1:size(lambdas, 1)
         lambda = lambdas(k,:);
         [Alc, Blc] = calc_sys_lambda(sys, lambda);
         ye = -Alc\Blc*sys.U;
